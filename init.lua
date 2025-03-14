@@ -886,6 +886,13 @@ require('lazy').setup({
           { name = 'nvim_lsp_signature_help' },
         },
       }
+
+      cmp.setup.filetype('sql', {
+        sources = {
+          { name = 'vim-dadbod-completion' },
+          { name = 'buffer' },
+        },
+      })
     end,
   },
 
