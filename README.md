@@ -1,3 +1,7 @@
+# config.nvim
+
+This is my Neovim config. I forked the kickstart.nvim repo and continued from there. It's a great starting resource btw (see rest of the readme bellow).
+
 # kickstart.nvim
 
 ## Introduction
