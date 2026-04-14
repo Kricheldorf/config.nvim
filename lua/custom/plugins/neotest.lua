@@ -12,6 +12,7 @@ return {
   },
   keys = {
     { '<leader>tn', function() require('neotest').run.run() end, desc = 'Test nearest' },
+    { '<leader>rc', function() require('neotest').run.run() end, desc = 'Test nearest' },
     { '<leader>tf', function() require('neotest').run.run(vim.fn.expand '%') end, desc = 'Test file' },
     { '<leader>tl', function() require('neotest').run.run_last() end, desc = 'Test last' },
     { '<leader>td', function() require('neotest').run.run { strategy = 'dap' } end, desc = 'Debug nearest test' },
