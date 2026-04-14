@@ -113,6 +113,12 @@ vim.o.relativenumber = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
+vim.filetype.add {
+  extension = {
+    ['http'] = 'http',
+  },
+}
+
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
 
@@ -409,11 +415,12 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          -- mappings = {
+          --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          -- },
+          path_display = { 'truncate' },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = { require('telescope.themes').get_dropdown() },
@@ -646,6 +653,8 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
+        --
+        --
 
         stylua = {}, -- Used to format Lua code
 
@@ -736,7 +745,7 @@ require('lazy').setup({
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -797,6 +806,7 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        ['<CR>'] = { 'select_and_accept', 'fallback' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -817,11 +827,11 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 500 },
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets' },
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
       },
 
       snippets = { preset = 'luasnip' },
@@ -840,25 +850,36 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
+  -- { -- You can easily change to a different colorscheme.
+  --   -- Change the name of the colorscheme plugin below, and then
+  --   -- change the command in the config to whatever the name of that colorscheme is.
+  --   --
+  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  --   'folke/tokyonight.nvim',
+  --   priority = 1000, -- Make sure to load this before all the other start plugins.
+  --   config = function()
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     require('tokyonight').setup {
+  --       styles = {
+  --         comments = { italic = false }, -- Disable italics in comments
+  --       },
+  --     }
+  --
+  --     -- Load the colorscheme here.
+  --     -- Like many other themes, this one has different styles, and you could load
+  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+  --     vim.cmd.colorscheme 'tokyonight-night'
+  --   end,
+  -- },
 
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+  {
+    'navarasu/onedark.nvim',
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('onedark').setup {
+        style = 'cool',
+      }
+      require('onedark').load()
     end,
   },
 
@@ -884,6 +905,8 @@ require('lazy').setup({
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
 
+      require('mini.basics').setup()
+
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
@@ -891,7 +914,12 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      require('mini.operators').setup()
+      require('mini.operators').setup {
+        replace = {
+          prefix = 'cr',
+          reindent_linewise = true, -- optional: re-indent when replacing linewise
+        },
+      }
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -995,6 +1023,11 @@ require('lazy').setup({
     },
     ft = { 'http', 'rest' },
     opts = {
+      lsp = {
+        enable = true,
+        formatter = true,
+        filetypes = { 'http', 'rest', 'json', 'yaml', 'bruno' },
+      },
       global_keymaps = true,
       global_keymaps_prefix = '<leader>R',
       kulala_keymaps_prefix = '',
@@ -1011,6 +1044,56 @@ require('lazy').setup({
     opts = {
       suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/', '~/Code' },
       -- log_level = 'debug',
+    },
+  },
+
+  {
+    'carlos-algms/agentic.nvim',
+
+    opts = {
+      -- Any ACP-compatible provider works. Built-in: "claude-agent-acp" | "gemini-acp" | "codex-acp" | "opencode-acp" | "cursor-acp" | "copilot-acp" | "auggie-acp" | "mistral-vibe-acp" | "cline-acp" | "goose-acp"
+      provider = 'claude-agent-acp', -- setting the name here is all you need to get started
+    },
+
+    -- these are just suggested keymaps; customize as desired
+    keys = {
+      {
+        '<C-\\>',
+        function() require('agentic').toggle() end,
+        mode = { 'n', 'v', 'i' },
+        desc = 'Toggle Agentic Chat',
+      },
+      {
+        "<C-'>",
+        function() require('agentic').add_selection_or_file_to_context() end,
+        mode = { 'n', 'v' },
+        desc = 'Add file or selection to Agentic to Context',
+      },
+      {
+        '<C-,>',
+        function() require('agentic').new_session() end,
+        mode = { 'n', 'v', 'i' },
+        desc = 'New Agentic Session',
+      },
+      {
+        '<A-i>r', -- ai Restore
+        function() require('agentic').restore_session() end,
+        desc = 'Agentic Restore session',
+        silent = true,
+        mode = { 'n', 'v', 'i' },
+      },
+      {
+        '<leader>ad', -- ai Diagnostics
+        function() require('agentic').add_current_line_diagnostics() end,
+        desc = 'Add current line diagnostic to Agentic',
+        mode = { 'n' },
+      },
+      {
+        '<leader>aD', -- ai all Diagnostics
+        function() require('agentic').add_buffer_diagnostics() end,
+        desc = 'Add all buffer diagnostics to Agentic',
+        mode = { 'n' },
+      },
     },
   },
 
@@ -1041,6 +1124,8 @@ require('lazy').setup({
   },
 })
 
-vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+
+vim.keymap.set('n', '<leader>tF', function() vim.cmd('vsplit | terminal npx jest ' .. vim.fn.expand '%' .. '; sleep 0') end, { desc = 'Test file' })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
