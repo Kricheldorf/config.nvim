@@ -11,6 +11,7 @@ return {
     -- 'marilari88/neotest-vitest',
   },
   keys = {
+    -- Mapping on summary to jump to test: i
     { '<leader>tn', function() require('neotest').run.run() end, desc = 'Test nearest' },
     { '<leader>rc', function() require('neotest').run.run() end, desc = 'Test nearest' },
     { '<leader>tf', function() require('neotest').run.run(vim.fn.expand '%') end, desc = 'Test file' },
@@ -87,6 +88,13 @@ return {
         -- require('neotest-vitest') {
         --   cwd = function(path) return find_project_root(path) end,
         -- },
+      },
+      consumers = {
+        open_summary_on_run = function(client)
+          client.listeners.run = function()
+            vim.schedule(function() require('neotest').summary.open() end)
+          end
+        end,
       },
     }
   end,
