@@ -7,10 +7,9 @@ else
 end
 
 -- TODO:ini
--- setup multicursors
--- setup exchange - check vim-exchange
--- check options for surround plugin - search this file for mini-surround
+-- update ideavim with new keymaps from snack
 -- figure out how to expand/collapse blocks - maybe use folds?
+-- review and update config structure
 
 --[[
 
@@ -202,7 +201,7 @@ vim.diagnostic.config {
   underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
   -- Can switch between these as you prefer
-  virtual_text = true, -- Text shows up at the end of the line
+  virtual_text = true,   -- Text shows up at the end of the line
   virtual_lines = false, -- Text shows up underneath the line, with virtual lines
 
   -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
@@ -218,7 +217,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', { noremap = true, silent = true, desc = 'Term in normal mode and leave to left buffer' })
+vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h',
+  { noremap = true, silent = true, desc = 'Term in normal mode and leave to left buffer' })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -352,10 +352,10 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
+        { '<leader>s', group = '[S]earch',    mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
-        { 'gr', group = 'LSP Actions', mode = { 'n' } },
+        { '<leader>h', group = 'Git [H]unk',  mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
+        { 'gr',        group = 'LSP Actions', mode = { 'n' } },
       },
     },
   },
@@ -375,14 +375,14 @@ require('lazy').setup({
     opts = {
       bigfile = { enabled = true },
       quickfile = { enabled = true },
-      -- input = { enabled = true },
+      input = { enabled = true },
       notifier = { enabled = true, timeout = 3000 },
       indent = { enabled = true },
       rename = { enabled = true },
       -- TODO: Add keymaps
       lazygit = { enabled = true },
       scratch = { enabled = true },
-      -- explorer = { enabled = true },
+      explorer = { enabled = true },
       picker = {
         enabled = true,
         win = {
@@ -406,67 +406,67 @@ require('lazy').setup({
       },
     },
     keys = {
-      { '<leader>.', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
-      { '<leader>S', function() Snacks.scratch.select() end, desc = 'Select Scratch Buffer' },
+      { '<leader>.',       function() Snacks.scratch() end,                                         desc = 'Toggle Scratch Buffer' },
+      { '<leader>S',       function() Snacks.scratch.select() end,                                  desc = 'Select Scratch Buffer' },
 
       -- Top Pickers & Explorer
-      { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
-      { '<leader>,', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-      { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
-      { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-      { '<leader>n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
-      -- { '<leader>e', function() Snacks.explorer() end, desc = 'File Explorer' },
+      { '<leader><space>', function() Snacks.picker.smart() end,                                    desc = 'Smart Find Files' },
+      { '<leader>,',       function() Snacks.picker.buffers() end,                                  desc = 'Buffers' },
+      { '<leader>/',       function() Snacks.picker.grep() end,                                     desc = 'Grep' },
+      { '<leader>:',       function() Snacks.picker.command_history() end,                          desc = 'Command History' },
+      { '<leader>n',       function() Snacks.picker.notifications() end,                            desc = 'Notification History' },
+      { '<leader>e',       function() Snacks.explorer() end,                                        desc = 'File Explorer' },
 
       -- git
-      { '<leader>gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
-      { '<leader>gl', function() Snacks.lazygit.log() end, desc = 'LazyGit Log' },
-      { '<leader>gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
-      { '<leader>gf', function() Snacks.lazygit.log_file() end, desc = 'LazyGit Log File' },
-      { '<leader>gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
-      { '<leader>gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
-      { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+      { '<leader>gb',      function() Snacks.picker.git_branches() end,                             desc = 'Git Branches' },
+      { '<leader>gl',      function() Snacks.lazygit.log() end,                                     desc = 'LazyGit Log' },
+      { '<leader>gL',      function() Snacks.picker.git_log_line() end,                             desc = 'Git Log Line' },
+      { '<leader>gf',      function() Snacks.lazygit.log_file() end,                                desc = 'LazyGit Log File' },
+      { '<leader>gs',      function() Snacks.picker.git_status() end,                               desc = 'Git Status' },
+      { '<leader>gS',      function() Snacks.picker.git_stash() end,                                desc = 'Git Stash' },
+      { '<leader>gd',      function() Snacks.picker.git_diff() end,                                 desc = 'Git Diff (Hunks)' },
 
       -- gh
-      { '<leader>gp', function() Snacks.picker.gh_pr() end, desc = 'GitHub Pull Requests (open)' },
-      { '<leader>gP', function() Snacks.picker.gh_pr { state = 'all' } end, desc = 'GitHub Pull Requests (all)' },
+      { '<leader>gp',      function() Snacks.picker.gh_pr() end,                                    desc = 'GitHub Pull Requests (open)' },
+      { '<leader>gP',      function() Snacks.picker.gh_pr { state = 'all' } end,                    desc = 'GitHub Pull Requests (all)' },
 
       -- Grep
-      { '<leader>sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
-      { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
-      { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
-      { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+      { '<leader>sb',      function() Snacks.picker.lines() end,                                    desc = 'Buffer Lines' },
+      { '<leader>sB',      function() Snacks.picker.grep_buffers() end,                             desc = 'Grep Open Buffers' },
+      { '<leader>sg',      function() Snacks.picker.grep() end,                                     desc = 'Grep' },
+      { '<leader>sw',      function() Snacks.picker.grep_word() end,                                desc = 'Visual selection or word',   mode = { 'n', 'x' } },
 
       -- find
-      { '<leader>fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-      { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find Files' },
-      { '<leader>fC', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
-      { '<leader>fD', function() Snacks.picker.files { cwd = vim.fn.expand '~/dotfiles' } end, desc = 'Find Dotfile File' },
-      { '<leader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
-      { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
-      { '<leader>fr', function() Snacks.picker.recent() end, desc = 'Recent' },
+      { '<leader>fb',      function() Snacks.picker.buffers() end,                                  desc = 'Buffers' },
+      { '<leader>ff',      function() Snacks.picker.files() end,                                    desc = 'Find Files' },
+      { '<leader>fC',      function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end,    desc = 'Find Config File' },
+      { '<leader>fD',      function() Snacks.picker.files { cwd = vim.fn.expand '~/dotfiles' } end, desc = 'Find Dotfile File' },
+      { '<leader>fg',      function() Snacks.picker.git_files() end,                                desc = 'Find Git Files' },
+      { '<leader>fp',      function() Snacks.picker.projects() end,                                 desc = 'Projects' },
+      { '<leader>fr',      function() Snacks.picker.recent() end,                                   desc = 'Recent' },
 
       -- search
-      { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
-      { '<leader>s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
-      { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-      { '<leader>sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
-      { '<leader>sC', function() Snacks.picker.commands() end, desc = 'Commands' },
-      { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-      { '<leader>sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
-      { '<leader>sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
-      { '<leader>sH', function() Snacks.picker.highlights() end, desc = 'Highlights' },
-      { '<leader>si', function() Snacks.picker.icons() end, desc = 'Icons' },
-      { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
-      { '<leader>sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
-      { '<leader>sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
-      { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
-      { '<leader>sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
-      { '<leader>sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
-      { '<leader>sP', function() Snacks.picker.pickers() end, desc = 'Search for pickers' },
-      { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
-      { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
-      { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-      { '<leader>uC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+      { '<leader>s"',      function() Snacks.picker.registers() end,                                desc = 'Registers' },
+      { '<leader>s/',      function() Snacks.picker.search_history() end,                           desc = 'Search History' },
+      { '<leader>sa',      function() Snacks.picker.autocmds() end,                                 desc = 'Autocmds' },
+      { '<leader>sc',      function() Snacks.picker.command_history() end,                          desc = 'Command History' },
+      { '<leader>sC',      function() Snacks.picker.commands() end,                                 desc = 'Commands' },
+      { '<leader>sd',      function() Snacks.picker.diagnostics() end,                              desc = 'Diagnostics' },
+      { '<leader>sD',      function() Snacks.picker.diagnostics_buffer() end,                       desc = 'Buffer Diagnostics' },
+      { '<leader>sh',      function() Snacks.picker.help() end,                                     desc = 'Help Pages' },
+      { '<leader>sH',      function() Snacks.picker.highlights() end,                               desc = 'Highlights' },
+      { '<leader>si',      function() Snacks.picker.icons() end,                                    desc = 'Icons' },
+      { '<leader>sj',      function() Snacks.picker.jumps() end,                                    desc = 'Jumps' },
+      { '<leader>sk',      function() Snacks.picker.keymaps() end,                                  desc = 'Keymaps' },
+      { '<leader>sl',      function() Snacks.picker.loclist() end,                                  desc = 'Location List' },
+      { '<leader>sm',      function() Snacks.picker.marks() end,                                    desc = 'Marks' },
+      { '<leader>sM',      function() Snacks.picker.man() end,                                      desc = 'Man Pages' },
+      { '<leader>sp',      function() Snacks.picker.lazy() end,                                     desc = 'Search for Plugin Spec' },
+      { '<leader>sP',      function() Snacks.picker.pickers() end,                                  desc = 'Search for pickers' },
+      { '<leader>sq',      function() Snacks.picker.qflist() end,                                   desc = 'Quickfix List' },
+      { '<leader>sr',      function() Snacks.picker.resume() end,                                   desc = 'Resume' },
+      { '<leader>su',      function() Snacks.picker.undo() end,                                     desc = 'Undo History' },
+      { '<leader>uC',      function() Snacks.picker.colorschemes() end,                             desc = 'Colorschemes' },
     },
   },
 
@@ -593,7 +593,9 @@ require('lazy').setup({
           -- This may be unwanted, since they displace some of your code
 
           if client and client:supports_method('textDocument/inlayHint', event.buf) then
-            map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+            map('<leader>th',
+              function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end,
+              '[T]oggle Inlay [H]ints')
           end
         end,
       })
@@ -865,6 +867,9 @@ require('lazy').setup({
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
 
+      require('mini.icons').setup()
+      MiniIcons.mock_nvim_web_devicons()
+
       require('mini.basics').setup()
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
@@ -907,7 +912,8 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
       -- ensure basic parser are installed
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim',
+        'vimdoc' }
       require('nvim-treesitter').install(parsers)
 
       ---@param buf integer
@@ -1094,6 +1100,7 @@ end, { desc = 'Test file' })
 --
 
 -- Print keybinds to file
+
 -- local modes = {'n','i','v','x','s','o','c','t'}
 -- local lines = {}
 -- for _, m in ipairs(modes) do
