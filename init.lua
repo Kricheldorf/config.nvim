@@ -1,13 +1,7 @@
-_G.dd = function(...)
-  Snacks.debug.inspect(...)
-end
-_G.bt = function()
-  Snacks.debug.backtrace()
-end
-if vim.fn.has("nvim-0.11") == 1 then
-  vim._print = function(_, ...)
-    dd(...)
-  end
+_G.dd = function(...) Snacks.debug.inspect(...) end
+_G.bt = function() Snacks.debug.backtrace() end
+if vim.fn.has 'nvim-0.11' == 1 then
+  vim._print = function(_, ...) dd(...) end
 else
   vim.print = dd
 end
@@ -381,7 +375,6 @@ require('lazy').setup({
     opts = {
       bigfile = { enabled = true },
       quickfile = { enabled = true },
-      picker = { enabled = true },
       -- input = { enabled = true },
       notifier = { enabled = true, timeout = 3000 },
       indent = { enabled = true },
@@ -389,32 +382,91 @@ require('lazy').setup({
       -- TODO: Add keymaps
       lazygit = { enabled = true },
       scratch = { enabled = true },
+      -- explorer = { enabled = true },
+      picker = {
+        enabled = true,
+        win = {
+          input = {
+            keys = {
+              ['<c-d>'] = { 'preview_scroll_down', mode = { 'n', 'i' } },
+              ['<c-u>'] = { 'preview_scroll_up', mode = { 'n', 'i' } },
+              ['<c-f>'] = { 'list_scroll_down', mode = { 'n', 'i' } },
+              ['<c-b>'] = { 'list_scroll_up', mode = { 'n', 'i' } },
+            },
+          },
+          list = {
+            keys = {
+              ['<c-d>'] = 'preview_scroll_down',
+              ['<c-u>'] = 'preview_scroll_up',
+              ['<c-f>'] = 'list_scroll_down',
+              ['<c-b>'] = 'list_scroll_up',
+            },
+          },
+        },
+      },
     },
     keys = {
-
       { '<leader>.', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
       { '<leader>S', function() Snacks.scratch.select() end, desc = 'Select Scratch Buffer' },
 
-      { '<leader>sh', function() Snacks.picker.help() end, desc = '[S]earch [H]elp' },
-      { '<leader>sk', function() Snacks.picker.keymaps() end, desc = '[S]earch [K]eymaps' },
-      { '<leader>sf', function() Snacks.picker.files() end, desc = '[S]earch [F]iles' },
-      { '<leader>ss', function() Snacks.picker.pickers() end, desc = '[S]earch [S]elect Picker' },
-      {
-        '<leader>sw',
-        function() Snacks.picker.grep_word() end,
-        desc = '[S]earch current [W]ord',
-        mode = { 'n', 'x' },
-      },
-      { '<leader>sg', function() Snacks.picker.grep() end, desc = '[S]earch by [G]rep' },
-      { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = '[S]earch [D]iagnostics' },
-      { '<leader>sr', function() Snacks.picker.resume() end, desc = '[S]earch [R]esume' },
-      { '<leader>s.', function() Snacks.picker.recent() end, desc = '[S]earch Recent Files ("." for repeat)' },
-      { '<leader>sc', function() Snacks.picker.commands() end, desc = '[S]earch [C]ommands' },
-      { '<leader><leader>', function() Snacks.picker.smart() end, desc = '[ ] Smart find files' },
-      { '<leader>/', function() Snacks.picker.lines() end, desc = '[/] Fuzzily search in current buffer' },
-      { '<leader>s/', function() Snacks.picker.grep_buffers() end, desc = '[S]earch [/] in Open Files' },
-      { '<leader>sn', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = '[S]earch [N]eovim files' },
-      { '<leader>sD', function() Snacks.picker.files { cwd = vim.fn.expand '~/dotfiles' } end, desc = '[S]earch [D]otfiles' },
+      -- Top Pickers & Explorer
+      { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
+      { '<leader>,', function() Snacks.picker.buffers() end, desc = 'Buffers' },
+      { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
+      { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
+      { '<leader>n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
+      -- { '<leader>e', function() Snacks.explorer() end, desc = 'File Explorer' },
+
+      -- git
+      { '<leader>gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
+      { '<leader>gl', function() Snacks.lazygit.log() end, desc = 'LazyGit Log' },
+      { '<leader>gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
+      { '<leader>gf', function() Snacks.lazygit.log_file() end, desc = 'LazyGit Log File' },
+      { '<leader>gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
+      { '<leader>gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
+      { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+
+      -- gh
+      { '<leader>gp', function() Snacks.picker.gh_pr() end, desc = 'GitHub Pull Requests (open)' },
+      { '<leader>gP', function() Snacks.picker.gh_pr { state = 'all' } end, desc = 'GitHub Pull Requests (all)' },
+
+      -- Grep
+      { '<leader>sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+      { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+      { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
+      { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+
+      -- find
+      { '<leader>fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
+      { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find Files' },
+      { '<leader>fC', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
+      { '<leader>fD', function() Snacks.picker.files { cwd = vim.fn.expand '~/dotfiles' } end, desc = 'Find Dotfile File' },
+      { '<leader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
+      { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
+      { '<leader>fr', function() Snacks.picker.recent() end, desc = 'Recent' },
+
+      -- search
+      { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
+      { '<leader>s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
+      { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
+      { '<leader>sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
+      { '<leader>sC', function() Snacks.picker.commands() end, desc = 'Commands' },
+      { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
+      { '<leader>sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
+      { '<leader>sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
+      { '<leader>sH', function() Snacks.picker.highlights() end, desc = 'Highlights' },
+      { '<leader>si', function() Snacks.picker.icons() end, desc = 'Icons' },
+      { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
+      { '<leader>sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
+      { '<leader>sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
+      { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+      { '<leader>sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
+      { '<leader>sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
+      { '<leader>sP', function() Snacks.picker.pickers() end, desc = 'Search for pickers' },
+      { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
+      { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
+      { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
+      { '<leader>uC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
     },
   },
 
@@ -493,14 +545,18 @@ require('lazy').setup({
 
           map('grr', function() Snacks.picker.lsp_references() end, '[G]oto [R]eferences')
           map('gri', function() Snacks.picker.lsp_implementations() end, '[G]oto [I]mplementation')
+          map('gd', function() Snacks.picker.lsp_definitions() end, '[G]oto [D]efinition')
           map('grd', function() Snacks.picker.lsp_definitions() end, '[G]oto [D]efinition')
           map('grt', function() Snacks.picker.lsp_type_definitions() end, '[G]oto [T]ype Definition')
           map('gO', function() Snacks.picker.lsp_symbols() end, 'Open Document Symbols')
           map('gW', function() Snacks.picker.lsp_workspace_symbols() end, 'Open Workspace Symbols')
 
+          map('<leader>ss', function() Snacks.picker.lsp_symbols() end, 'Open Document Symbols')
+          map('<leader>sS', function() Snacks.picker.lsp_workspace_symbols() end, 'Open Workspace Symbols')
+
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
-          map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('grD', function() Snacks.picker.lsp_workspace_symbols() end, '[G]oto [D]eclaration')
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
@@ -535,6 +591,7 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
+
           if client and client:supports_method('textDocument/inlayHint', event.buf) then
             map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
           end
