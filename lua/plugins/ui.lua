@@ -11,7 +11,6 @@ return {
       notifier = { enabled = true, timeout = 3000 },
       indent = { enabled = true },
       rename = { enabled = true },
-      -- TODO: Add keymaps
       lazygit = { enabled = true },
       scratch = { enabled = true },
       explorer = { enabled = true },

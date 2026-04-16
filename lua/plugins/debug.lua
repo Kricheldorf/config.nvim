@@ -1,3 +1,5 @@
+-- TODO: change Breakpoint symbol
+-- TODO: change keymap to same as chrome dev tools
 return {
   'mfussenegger/nvim-dap',
   dependencies = {
