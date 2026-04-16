@@ -1,17 +1,13 @@
----@module 'lazy'
----@type LazySpec
 return {
   'nvim-neotest/neotest',
   dependencies = {
     'nvim-neotest/nvim-nio',
     'nvim-lua/plenary.nvim',
-    "antoinemadec/FixCursorHold.nvim",
+    'antoinemadec/FixCursorHold.nvim',
     'nvim-treesitter/nvim-treesitter',
     'nvim-neotest/neotest-jest',
-    -- 'marilari88/neotest-vitest',
   },
   keys = {
-    -- Mapping on summary to jump to test: i
     { '<leader>tn', function() require('neotest').run.run() end, desc = 'Test nearest' },
     { '<leader>rc', function() require('neotest').run.run() end, desc = 'Test nearest' },
     { '<leader>tf', function() require('neotest').run.run(vim.fn.expand '%') end, desc = 'Test file' },
@@ -48,30 +44,23 @@ return {
 
     local function find_project_root(path)
       local dir = is_dir(path) and path or dirname(path)
-
       while dir and dir ~= '' do
         if is_file(join(dir, 'package.json')) or is_dir(join(dir, '.git')) then return dir end
-
         local parent = dirname(dir)
         if parent == dir then break end
         dir = parent
       end
-
       return uv.cwd()
     end
 
     local function find_jest_config(path)
       local dir = is_dir(path) and path or dirname(path)
-      local configs = {
-        'jest.config.ts',
-      }
-
+      local configs = { 'jest.config.ts' }
       while dir and dir ~= '' do
         for _, config in ipairs(configs) do
           local config_path = join(dir, config)
           if is_file(config_path) then return config_path end
         end
-
         local parent = dirname(dir)
         if parent == dir then break end
         dir = parent
@@ -85,9 +74,6 @@ return {
           jestConfigFile = function(path) return find_jest_config(path) end,
           cwd = function(path) return find_project_root(path) end,
         },
-        -- require('neotest-vitest') {
-        --   cwd = function(path) return find_project_root(path) end,
-        -- },
       },
       consumers = {
         open_summary_on_run = function(client)

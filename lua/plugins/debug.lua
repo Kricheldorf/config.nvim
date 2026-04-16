@@ -1,20 +1,9 @@
--- debug.lua
---
--- DAP (Debug Adapter Protocol) setup with nvim-dap-view
--- and TypeScript/JavaScript debugging via js-debug-adapter (vscode-js-debug).
-
----@module 'lazy'
----@type LazySpec
 return {
   'mfussenegger/nvim-dap',
   dependencies = {
-    -- Lightweight debugger UI (replaces nvim-dap-ui)
     'igorlfs/nvim-dap-view',
-
-    -- Installs debug adapters for you
     'mason-org/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
-
   },
   keys = {
     { '<F5>', function() require('dap').continue() end, desc = 'Debug: Start/Continue' },
@@ -33,15 +22,11 @@ return {
     require('mason-nvim-dap').setup {
       automatic_installation = true,
       handlers = {},
-      ensure_installed = {
-        'js', -- installs js-debug-adapter (vscode-js-debug)
-      },
+      ensure_installed = { 'js' },
     }
 
-    -- nvim-dap-view setup
     require('dap-view').setup {}
 
-    -- Temporary arrow-key keymaps active only during debug sessions
     local function set_debug_keymaps()
       local opts = { silent = true, noremap = true }
       vim.keymap.set('n', '<Down>', function() dap.step_over() end, vim.tbl_extend('force', opts, { desc = 'Debug: Step Over' }))
@@ -57,7 +42,6 @@ return {
       vim.keymap.del('n', '<Up>')
     end
 
-    -- Auto open/close dap-view and set/remove debug keymaps on session start/end
     dap.listeners.after.event_initialized['dap-view'] = function()
       require('dap-view').open()
       set_debug_keymaps()
@@ -71,7 +55,6 @@ return {
       del_debug_keymaps()
     end
 
-    -- JS/TS debug adapter (using Mason-installed js-debug-adapter directly)
     local js_debug_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter'
     local js_debug_entrypoint = js_debug_path .. '/js-debug/src/dapDebugServer.js'
 
@@ -87,10 +70,8 @@ return {
       }
     end
 
-    -- Configurations for JS/TS languages
     for _, language in ipairs { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' } do
       dap.configurations[language] = {
-        -- Attach to --inspect on port 9229 (e.g. nx serve --inspect)
         {
           type = 'pwa-node',
           request = 'attach',
@@ -98,10 +79,9 @@ return {
           port = 9229,
           cwd = '${workspaceFolder}',
           sourceMaps = true,
-          restart = true, -- re-attach on server restart (watch mode)
+          restart = true,
           skipFiles = { '<node_internals>/**', 'node_modules/**' },
         },
-        -- Attach to running Node process (pick from list)
         {
           type = 'pwa-node',
           request = 'attach',
@@ -109,7 +89,6 @@ return {
           processId = require('dap.utils').pick_process,
           cwd = '${workspaceFolder}',
         },
-        -- Launch current file with Node
         {
           type = 'pwa-node',
           request = 'launch',
@@ -117,7 +96,6 @@ return {
           program = '${file}',
           cwd = '${workspaceFolder}',
         },
-        -- Launch current file with ts-node
         {
           type = 'pwa-node',
           request = 'launch',
@@ -126,7 +104,6 @@ return {
           program = '${file}',
           cwd = '${workspaceFolder}',
         },
-        -- Debug Jest tests
         {
           type = 'pwa-node',
           request = 'launch',
@@ -138,7 +115,6 @@ return {
           console = 'integratedTerminal',
           internalConsoleOptions = 'neverOpen',
         },
-        -- Debug with Chrome
         {
           type = 'pwa-chrome',
           request = 'launch',
