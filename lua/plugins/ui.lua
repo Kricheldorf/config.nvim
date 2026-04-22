@@ -19,6 +19,8 @@ return {
         win = {
           input = {
             keys = {
+              -- ['<esc>'] = { 'close', mode = { 'n', 'i' } },
+              -- ['<c-[>'] = { '<esc>', mode = 'i', expr = true },
               ['<c-d>'] = { 'preview_scroll_down', mode = { 'n', 'i' } },
               ['<c-u>'] = { 'preview_scroll_up', mode = { 'n', 'i' } },
               ['<c-f>'] = { 'list_scroll_down', mode = { 'n', 'i' } },
@@ -48,6 +50,7 @@ return {
       { '<leader>e', function() Snacks.explorer() end, desc = 'File Explorer' },
 
       { '<leader>gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
+      { '<leader>gg', function() Snacks.lazygit.open() end, desc = 'LazyGit Open' },
       { '<leader>gl', function() Snacks.lazygit.log() end, desc = 'LazyGit Log' },
       { '<leader>gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
       { '<leader>gf', function() Snacks.lazygit.log_file() end, desc = 'LazyGit Log File' },
@@ -62,6 +65,10 @@ return {
       { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
       { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
       { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+
+      { '<leader>bd', function() Snacks.bufdelete() end, desc = 'Delete Buffer' },
+      { '<leader>bo', function() Snacks.bufdelete.other() end, desc = 'Delete Other Buffers' },
+      { '<leader>ba', function() Snacks.bufdelete.all() end, desc = 'Delete All Buffers' },
 
       { '<leader>fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
       { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find Files' },
@@ -114,6 +121,8 @@ return {
       delay = 0,
       icons = { mappings = vim.g.have_nerd_font },
       spec = {
+        { '<leader>b', group = '[B]uffer' },
+        { '<leader>d', group = '[D]ebug' },
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -130,5 +139,46 @@ return {
     ---@type TodoOptions
     ---@diagnostic disable-next-line: missing-fields
     opts = { signs = false },
+  },
+
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'MunifTanjim/nui.nvim' },
+    ---@module 'noice'
+    ---@type NoiceConfig
+    opts = {
+      notify = { enabled = false },
+      lsp = {
+        -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+        override = {
+          ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+          ['vim.lsp.util.stylize_markdown'] = true,
+          -- ['cmp.entry.get_documentation'] = true, -- requires hrsh7th/nvim-cmp
+        },
+      },
+      presets = {
+        bottom_search = true, -- use a classic bottom cmdline for search
+        command_palette = true, -- position the cmdline and popupmenu together
+        long_message_to_split = true, -- long messages will be sent to a split
+        inc_rename = false, -- enables an input dialog for inc-rename.nvim
+        lsp_doc_border = true, -- add a border to hover docs and signature help
+      },
+
+      -- cmdline = { enabled = true, view = 'cmdline_popup' },
+      -- messages = { enabled = true },
+      -- popupmenu = { enabled = true },
+      -- lsp = {
+      --   progress = { enabled = true },
+      --   hover = { enabled = true },
+      --   signature = { enabled = false },
+      --   message = { enabled = false },
+      -- },
+      -- presets = {
+      --   -- bottom_search = true,
+      --   command_palette = true,
+      --   long_message_to_split = true,
+      -- },
+    },
   },
 }

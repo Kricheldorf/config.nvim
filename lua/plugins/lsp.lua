@@ -64,6 +64,7 @@ return {
       ---@type table<string, vim.lsp.Config>
       local servers = {
         stylua = {},
+        pyright = {},
         lua_ls = {
           on_init = function(client)
             if client.workspace_folders then
@@ -111,8 +112,6 @@ return {
 
   {
     'dmmulroy/ts-error-translator.nvim',
-    config = function()
-      require('ts-error-translator').setup {}
-    end,
+    config = function() require('ts-error-translator').setup {} end,
   },
 }

@@ -28,9 +28,27 @@ return {
     },
     sources = {
       default = { 'lsp', 'path', 'snippets', 'buffer' },
+      per_filetype = {
+        sql = { 'snippets', 'dadbod', 'buffer' },
+        mysql = { 'snippets', 'dadbod', 'buffer' },
+        plsql = { 'snippets', 'dadbod', 'buffer' },
+      },
+      providers = {
+        dadbod = {
+          name = 'Dadbod',
+          module = 'vim_dadbod_completion.blink',
+          min_keyword_length = 0,
+          score_offset = 100,
+        },
+      },
     },
     snippets = { preset = 'luasnip' },
     fuzzy = { implementation = 'lua' },
     signature = { enabled = true },
+    -- cmdline = {
+    --   enabled = true,
+    --   keymap = { preset = 'cmdline' },
+    --   completion = { menu = { auto_show = true } },
+    -- },
   },
 }

@@ -61,7 +61,7 @@ return {
       local set = vim.keymap.set
 
       set({ 'n', 'x' }, '<C-n>', function() mc.matchAddCursor(1) end)
-      set({ 'n', 'x' }, '<C-x>', function() mc.matchSkipCursor(1) end)
+      set({ 'n', 'x' }, '<C-S-x>', function() mc.matchSkipCursor(1) end)
       set({ 'n', 'x' }, '<C-p>', function() mc.matchSkipCursor(-1) end)
       set({ 'n', 'x' }, '<leader><C-n>', mc.matchAllAddCursors)
 
@@ -158,5 +158,16 @@ return {
       ---@diagnostic disable-next-line: duplicate-set-field
       statusline.section_location = function() return '%2l:%-2v' end
     end,
+  },
+  {
+    'otavioschwanck/arrow.nvim',
+    dependencies = {
+      { 'nvim-tree/nvim-web-devicons' },
+    },
+    opts = {
+      show_icons = true,
+      leader_key = ';', -- Recommended to be a single key
+      buffer_leader_key = 'm', -- Per Buffer Mappings
+    },
   },
 }

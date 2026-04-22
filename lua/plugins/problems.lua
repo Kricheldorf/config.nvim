@@ -31,4 +31,17 @@ return {
       { '<leader>xQ', '<cmd>Trouble qflist toggle<cr>', desc = 'Quickfix List (Trouble)' },
     },
   },
+
+  {
+    'stevearc/quicker.nvim',
+    ft = 'qf',
+    ---@module "quicger"
+    ---@type quicker.SetupOptions
+    opts = {
+      keys = {
+        { '>', "<cmd>lua require('quicker').expand()<CR>", desc = 'Expand quickfix content' },
+        { '<', "<cmd>lua require('quicker').collapse()<CR>", desc = 'Collapse quickfix content' },
+      },
+    },
+  },
 }

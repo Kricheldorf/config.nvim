@@ -2,6 +2,8 @@
 vim.keymap.set('n', '<c-[>', '<cmd>nohlsearch<CR>')
 
 vim.keymap.set('n', '<C-s>', '<cmd>update<CR>')
+vim.keymap.set('n', '<leader>Rr', '<cmd>restart<CR>')
+vim.keymap.set('n', '<leader>Rd', '<cmd>AutoSession delete<CR>')
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -19,9 +21,9 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
--- Quickfix navigation
-vim.keymap.set('n', '<M-j>', '<cmd>cnext<CR>')
-vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>')
+-- Diagnostic navigation
+vim.keymap.set('n', '<M-j>', function() vim.diagnostic.jump { count = 1, float = true } end, { desc = 'Next diagnostic' })
+vim.keymap.set('n', '<M-k>', function() vim.diagnostic.jump { count = -1, float = true } end, { desc = 'Prev diagnostic' })
 
 -- Wrapped line navigation
 vim.keymap.set('n', 'j', 'gj', { noremap = true })

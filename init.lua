@@ -10,9 +10,7 @@ end
 -- TODO:
 -- setup other.nvim to jump from and to view and edit pages/components counterparts
 -- setup other.nvim to jump to page.tsx file
--- update ideavim with new keymaps from snack
 -- figure out how to expand/collapse blocks - maybe use folds?
--- review and update config structure
 
 vim.g.mapleader = ' '
 -- vim.g.maplocalleader = ' '
