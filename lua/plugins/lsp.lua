@@ -65,6 +65,10 @@ return {
       local servers = {
         stylua = {},
         pyright = {},
+        eslint = {
+          settings = { workingDirectories = { mode = 'auto' } },
+        },
+        sqlfluff = {},
         lua_ls = {
           on_init = function(client)
             if client.workspace_folders then

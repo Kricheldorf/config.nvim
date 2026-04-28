@@ -61,8 +61,10 @@ return {
       local set = vim.keymap.set
 
       set({ 'n', 'x' }, '<C-n>', function() mc.matchAddCursor(1) end)
+      set({ 'n', 'x' }, '<C-S-n>', function() mc.matchSkipCursor(1) end)
       set({ 'n', 'x' }, '<C-S-x>', function() mc.matchSkipCursor(1) end)
-      set({ 'n', 'x' }, '<C-p>', function() mc.matchSkipCursor(-1) end)
+      set({ 'n', 'x' }, '<C-p>', function() mc.matchAddCursor(-1) end)
+      set({ 'n', 'x' }, '<C-S-p>', function() mc.matchSkipCursor(-1) end)
       set({ 'n', 'x' }, '<leader><C-n>', mc.matchAllAddCursors)
 
       set({ 'n', 'x' }, '<up>', function() mc.lineAddCursor(-1) end)
@@ -119,7 +121,7 @@ return {
           minHeight = 2,
         },
       }
-      vim.keymap.set('n', '<leader>gt', '<cmd>Other<CR>', { noremap = true, silent = true })
+      vim.keymap.set('n', 'gt', '<cmd>Other<CR>', { noremap = true, silent = true })
     end,
   },
 
@@ -159,15 +161,15 @@ return {
       statusline.section_location = function() return '%2l:%-2v' end
     end,
   },
-  {
-    'otavioschwanck/arrow.nvim',
-    dependencies = {
-      { 'nvim-tree/nvim-web-devicons' },
-    },
-    opts = {
-      show_icons = true,
-      leader_key = ';', -- Recommended to be a single key
-      buffer_leader_key = 'm', -- Per Buffer Mappings
-    },
-  },
+  -- {
+  --   'otavioschwanck/arrow.nvim',
+  --   dependencies = {
+  --     { 'nvim-tree/nvim-web-devicons' },
+  --   },
+  --   opts = {
+  --     show_icons = true,
+  --     leader_key = ';', -- Recommended to be a single key
+  --     buffer_leader_key = 'm', -- Per Buffer Mappings
+  --   },
+  -- },
 }
