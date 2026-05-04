@@ -2,8 +2,8 @@
 vim.keymap.set('n', '<c-[>', '<cmd>nohlsearch<CR>')
 
 vim.keymap.set('n', '<C-s>', '<cmd>update<CR>')
-vim.keymap.set('n', '<leader>Rr', '<cmd>restart<CR>')
-vim.keymap.set('n', '<leader>Rd', '<cmd>AutoSession delete<CR>')
+vim.keymap.set('n', 'zr', '<cmd>restart<CR>')
+vim.keymap.set('n', 'zd', '<cmd>AutoSession delete<CR>', { desc = 'Delete AutoSession' })
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 

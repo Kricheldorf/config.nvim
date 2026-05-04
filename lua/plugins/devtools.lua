@@ -12,12 +12,13 @@ return {
       kulala_keymaps_prefix = '',
     },
   },
-  {
-    'stevearc/overseer.nvim',
-    ---@module 'overseer'
-    ---@type overseer.SetupOpts
-    opts = {},
-  },
+  -- TODO: Review necessity and usage. Startup time was around 12ms, very impactful if not used
+  -- {
+  --   'stevearc/overseer.nvim',
+  --   ---@module 'overseer'
+  --   ---@type overseer.SetupOpts
+  --   opts = {},
+  -- },
   {
     'tpope/vim-dadbod',
     cmd = { 'DB' },
