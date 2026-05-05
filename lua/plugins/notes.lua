@@ -40,8 +40,5 @@ return {
     opts = {
       files = { '*.md' },
     },
-    keys = {
-      { '<leader>tt', '<cmd>Checkmate toggle<CR>', desc = 'Toggle todo' },
-    },
   },
 }

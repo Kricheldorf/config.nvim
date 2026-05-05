@@ -40,3 +40,19 @@ vim.o.scrolloff = 10
 vim.o.confirm = true
 
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+
+vim.o.foldenable = true
+vim.o.foldmethod = 'expr'
+vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.o.foldtext = ''
+vim.o.foldlevelstart = 99
+-- vim.o.foldcolumn = 'auto:9'
+vim.o.fillchars = 'foldclose:▸,foldopen:▾'
+
+-- vim.opt.fillchars = {
+--   fold = ' ',
+--   foldopen = '▾',
+--   foldclose = '▸',
+--   foldinner = ' ',
+--   foldsep = ' ',
+-- }

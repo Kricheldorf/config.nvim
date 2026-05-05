@@ -8,8 +8,8 @@ return {
     'nvim-neotest/neotest-jest',
   },
   keys = {
-    { '<leader>tn', function() require('neotest').run.run() end, desc = 'Test nearest' },
     { '<leader>rc', function() require('neotest').run.run() end, desc = 'Test nearest' },
+    { '<leader>tn', function() require('neotest').run.run() end, desc = 'Test nearest' },
     { '<leader>tf', function() require('neotest').run.run(vim.fn.expand '%') end, desc = 'Test file' },
     { '<leader>tl', function() require('neotest').run.run_last() end, desc = 'Test last' },
     { '<leader>td', function() require('neotest').run.run { strategy = 'dap' } end, desc = 'Debug nearest test' },
@@ -38,9 +38,7 @@ return {
       return parent ~= '' and parent or '/'
     end
 
-    local function join(...)
-      return table.concat({ ... }, '/')
-    end
+    local function join(...) return table.concat({ ... }, '/') end
 
     local function find_project_root(path)
       local dir = is_dir(path) and path or dirname(path)
@@ -69,7 +67,7 @@ return {
 
     require('neotest').setup {
       adapters = {
-        require('neotest-jest') {
+        require 'neotest-jest' {
           jestCommand = 'npx jest',
           jestConfigFile = function(path) return find_jest_config(path) end,
           cwd = function(path) return find_project_root(path) end,

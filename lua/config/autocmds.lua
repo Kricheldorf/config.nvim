@@ -12,3 +12,17 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     vim.fn.winrestview(save)
   end,
 })
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('lsp_attach_config', { clear = true }),
+  desc = 'Setup on LspAttach',
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client and client:supports_method 'textDocument/foldingRange' then
+      local win = vim.api.nvim_get_current_win()
+      vim.wo[win][0].foldmethod = 'expr'
+      vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+      -- vim.wo[win][0].foldtext = 'v:lua.vim.lsp.foldtext()'
+    end
+  end,
+})

@@ -2,6 +2,18 @@ return {
   {
     'mistweaverco/kulala.nvim',
     opts = {
+      ui = {
+        scratchpad_default_contents = {
+          'POST {{base_url}}/orders HTTP/1.1',
+          'accept: application/json',
+          'content-type: application/json',
+          'Authorization: Bearer {{token}}',
+          '',
+          '{',
+          '  "foo": "bar"',
+          '}',
+        },
+      },
       lsp = {
         enable = true,
         formatter = false,
