@@ -58,6 +58,59 @@ return {
     { '<leader>gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
     { '<leader>gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
     { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+    {
+      '<leader>gm',
+      function()
+        local head = vim.fn.systemlist 'git rev-parse --abbrev-ref origin/HEAD'
+        local base = (head[1] and vim.v.shell_error == 0) and head[1]:gsub('^origin/', '') or 'main'
+        local out = vim.fn.systemlist { 'git', 'diff', '--name-only', base .. '...HEAD' }
+        if vim.v.shell_error ~= 0 or #out == 0 then
+          vim.notify('No files changed vs ' .. base, vim.log.levels.INFO)
+          return
+        end
+        local cwd = vim.uv.cwd()
+        local bufs = {}
+        for _, info in ipairs(vim.fn.getbufinfo { buflisted = 1 }) do
+          if info.name ~= '' then
+            local rel = vim.fs.relpath(cwd, info.name) or info.name
+            bufs[rel] = info.lastused or 0
+          end
+        end
+        local oldrank = {}
+        for i, p in ipairs(vim.v.oldfiles) do
+          local rel = vim.fs.relpath(cwd, p) or p
+          if not oldrank[rel] then oldrank[rel] = i end
+        end
+        local in_buf, not_in_buf = {}, {}
+        for _, f in ipairs(out) do
+          table.insert(bufs[f] and in_buf or not_in_buf, f)
+        end
+        table.sort(in_buf, function(a, b) return bufs[a] > bufs[b] end)
+        table.sort(not_in_buf, function(a, b)
+          return (oldrank[a] or math.huge) < (oldrank[b] or math.huge)
+        end)
+        local items, idx = {}, 0
+        local add = function(f, group)
+          idx = idx + 1
+          items[idx] = { idx = idx, file = f, text = f, group = group }
+        end
+        for _, f in ipairs(in_buf) do add(f, 'buffer') end
+        for _, f in ipairs(not_in_buf) do add(f, 'other') end
+        Snacks.picker.pick {
+          source = 'changed_vs_main',
+          title = 'Changed vs ' .. base,
+          items = items,
+          sort = { fields = { 'idx' } },
+          format = function(item, picker)
+            local ret = Snacks.picker.format.file(item, picker)
+            if item.group == 'buffer' then table.insert(ret, 1, { '● ', 'SnacksPickerGitStatusModified' }) end
+            return ret
+          end,
+          preview = 'file',
+        }
+      end,
+      desc = 'Files changed vs main',
+    },
 
     {
       '<leader>gy',
