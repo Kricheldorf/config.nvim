@@ -86,16 +86,18 @@ return {
           table.insert(bufs[f] and in_buf or not_in_buf, f)
         end
         table.sort(in_buf, function(a, b) return bufs[a] > bufs[b] end)
-        table.sort(not_in_buf, function(a, b)
-          return (oldrank[a] or math.huge) < (oldrank[b] or math.huge)
-        end)
+        table.sort(not_in_buf, function(a, b) return (oldrank[a] or math.huge) < (oldrank[b] or math.huge) end)
         local items, idx = {}, 0
         local add = function(f, group)
           idx = idx + 1
           items[idx] = { idx = idx, file = f, text = f, group = group }
         end
-        for _, f in ipairs(in_buf) do add(f, 'buffer') end
-        for _, f in ipairs(not_in_buf) do add(f, 'other') end
+        for _, f in ipairs(in_buf) do
+          add(f, 'buffer')
+        end
+        for _, f in ipairs(not_in_buf) do
+          add(f, 'other')
+        end
         Snacks.picker.pick {
           source = 'changed_vs_main',
           title = 'Changed vs ' .. base,
