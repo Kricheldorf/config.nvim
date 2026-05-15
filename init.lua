@@ -13,7 +13,7 @@ end
 -- figure out how to expand/collapse blocks - maybe use folds?
 
 vim.g.mapleader = ' '
--- vim.g.maplocalleader = ' '
+vim.g.maplocalleader = '\\'
 vim.g.have_nerd_font = true
 
 require 'config.options'

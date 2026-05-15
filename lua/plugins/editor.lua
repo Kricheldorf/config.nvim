@@ -1,5 +1,5 @@
 return {
-  { 'NMAC427/guess-indent.nvim', opts = {} },
+  { 'NMAC427/guess-indent.nvim', event = { 'BufReadPre', 'BufNewFile' }, opts = {} },
 
   { 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
 
@@ -25,7 +25,8 @@ return {
         return '  ' .. vim.fn.fnamemodify(path, ':.')
       end
 
-      require('oil').setup {
+      local oil = require 'oil'
+      oil.setup {
         columns = { 'icon' },
         keymaps = {
           ['<C-h>'] = false,
@@ -33,6 +34,27 @@ return {
           ['<C-k>'] = false,
           ['<C-j>'] = false,
           ['<M-h>'] = 'actions.select_split',
+          gs = {
+            callback = function()
+              -- get the current directory
+              local prefills = { paths = oil.get_current_dir() }
+
+              local grug_far = require 'grug-far'
+              -- instance check
+              if not grug_far.has_instance 'explorer' then
+                grug_far.open {
+                  instanceName = 'explorer',
+                  prefills = prefills,
+                  staticTitle = 'Find and Replace from Explorer',
+                }
+              else
+                grug_far.get_instance('explorer'):open()
+                -- updating the prefills without clearing the search and other fields
+                grug_far.get_instance('explorer'):update_input_values(prefills, false)
+              end
+            end,
+            desc = 'oil: Search in directory',
+          },
         },
         win_options = {
           winbar = '%{v:lua.CustomOilBar()}',
@@ -54,6 +76,7 @@ return {
   {
     'jake-stewart/multicursor.nvim',
     branch = '1.0',
+    event = 'VeryLazy',
     config = function()
       local mc = require 'multicursor-nvim'
       mc.setup()
@@ -106,6 +129,8 @@ return {
 
   {
     'rgroli/other.nvim',
+    cmd = 'Other',
+    keys = { { 'gt', desc = 'Go to other file' } },
     config = function()
       require('other-nvim').setup {
         mappings = {
@@ -146,4 +171,9 @@ return {
   --     buffer_leader_key = 'm', -- Per Buffer Mappings
   --   },
   -- },
+  {
+    'MagicDuck/grug-far.nvim',
+    cmd = 'GrugFar',
+    opts = {},
+  },
 }

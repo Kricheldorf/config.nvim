@@ -1,7 +1,7 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    lazy = false,
+    event = { 'BufReadPre', 'BufNewFile' },
     build = ':TSUpdate',
     branch = 'main',
     config = function()
@@ -54,6 +54,7 @@ return {
 
   {
     'nvim-treesitter/nvim-treesitter-context',
+    event = 'BufReadPost',
     opts = {
       trim_scope = 'inner',
       multiline_threshold = 1,

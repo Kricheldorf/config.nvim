@@ -1,7 +1,12 @@
 return {
   'nvim-mini/mini.nvim',
+  event = 'VeryLazy',
   config = function()
-    require('mini.basics').setup()
+    require('mini.basics').setup {
+      mappings = {
+        windows = true,
+      },
+    }
 
     require('mini.ai').setup { n_lines = 500 } -- new useful text objects
 

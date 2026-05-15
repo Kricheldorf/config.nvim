@@ -45,7 +45,7 @@ return {
 
   {
     'folke/todo-comments.nvim',
-    event = 'VimEnter',
+    event = { 'BufReadPre', 'BufNewFile' },
     dependencies = { 'nvim-lua/plenary.nvim' },
     ---@module 'todo-comments'
     ---@type TodoOptions
@@ -109,6 +109,12 @@ return {
       { '[B', '<cmd>BufferLineMovePrev<cr>', desc = 'Move buffer prev' },
       { ']B', '<cmd>BufferLineMoveNext<cr>', desc = 'Move buffer next' },
       { '<leader>bj', '<cmd>BufferLinePick<cr>', desc = 'Pick Buffer' },
+      { '<A-1>', '<cmd>BufferLineGoToBuffer 1<cr>', desc = 'Buffer 1' },
+      { '<A-2>', '<cmd>BufferLineGoToBuffer 2<cr>', desc = 'Buffer 2' },
+      { '<A-3>', '<cmd>BufferLineGoToBuffer 3<cr>', desc = 'Buffer 3' },
+      { '<A-4>', '<cmd>BufferLineGoToBuffer 4<cr>', desc = 'Buffer 4' },
+      { '<A-5>', '<cmd>BufferLineGoToBuffer 5<cr>', desc = 'Buffer 5' },
+      { '<A-6>', '<cmd>BufferLineGoToBuffer 6<cr>', desc = 'Buffer 6' },
     },
     opts = {
       options = {

@@ -1,6 +1,7 @@
 return {
   {
     'neovim/nvim-lspconfig',
+    event = { 'BufReadPre', 'BufNewFile' },
     dependencies = {
       { 'mason-org/mason.nvim', opts = {} },
       'mason-org/mason-lspconfig.nvim',
@@ -110,12 +111,14 @@ return {
 
   {
     'pmizio/typescript-tools.nvim',
+    ft = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
   },
 
   {
     'dmmulroy/ts-error-translator.nvim',
+    ft = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
     config = function() require('ts-error-translator').setup {} end,
   },
 }
