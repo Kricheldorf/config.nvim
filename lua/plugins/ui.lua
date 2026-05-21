@@ -18,7 +18,16 @@ return {
     lazy = false,
     priority = 1000,
     config = function()
-      require('onedark').setup { style = 'cool' }
+      require('onedark').setup {
+        style = 'cool',
+        colors = {
+          bg0 = '#282A36',
+          bg1 = '#343746',
+          bg2 = '#3a3d4d',
+          bg3 = '#44475A',
+          bg_d = '#21222C',
+        },
+      }
       require('onedark').load()
     end,
   },

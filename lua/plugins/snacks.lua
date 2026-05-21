@@ -7,6 +7,51 @@ return {
     bigfile = { enabled = true },
     explorer = { enabled = true },
     gitbrowse = { enabled = true },
+    terminal = {
+      enabled = true,
+      bo = {
+        filetype = 'snacks_terminal',
+      },
+      wo = {},
+      stack = true, -- when enabled, multiple split windows with the same position will be stacked together (useful for terminals)
+      keys = {
+        q = 'hide',
+        gf = function(self)
+          local f = vim.fn.findfile(vim.fn.expand '<cfile>', '**')
+          if f == '' then
+            Snacks.notify.warn 'No file under cursor'
+          else
+            self:hide()
+            vim.schedule(function() vim.cmd('e ' .. f) end)
+          end
+        end,
+        term_normal = {
+          '<esc>',
+          function(self)
+            self.esc_timer = self.esc_timer or (vim.uv or vim.loop).new_timer()
+            if self.esc_timer:is_active() then
+              self.esc_timer:stop()
+              vim.cmd 'stopinsert'
+            else
+              self.esc_timer:start(200, 0, function() end)
+              return '<esc>'
+            end
+          end,
+          mode = 't',
+          expr = true,
+          desc = 'Double escape to normal mode',
+        },
+      },
+    },
+    image = {
+      enabled = true,
+      doc = {
+        inline = true,
+        float = true,
+        max_width = 80,
+        max_height = 40,
+      },
+    },
     indent = { enabled = true },
     input = { enabled = true },
     lazygit = { enabled = true },
@@ -175,5 +220,25 @@ return {
     { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
     { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<leader>uC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+    { '<c-/>', function() Snacks.terminal() end, mode = { 'n', 't' }, desc = 'Toggle Terminal' },
+    { '<c-_>', function() Snacks.terminal() end, mode = { 'n', 't' }, desc = 'which_key_ignore' },
+    {
+      '<leader>N',
+      desc = 'Neovim News',
+      function()
+        Snacks.win {
+          file = vim.api.nvim_get_runtime_file('doc/news.txt', false)[1],
+          width = 0.6,
+          height = 0.6,
+          wo = {
+            spell = false,
+            wrap = false,
+            signcolumn = 'yes',
+            statuscolumn = ' ',
+            conceallevel = 3,
+          },
+        }
+      end,
+    },
   },
 }
