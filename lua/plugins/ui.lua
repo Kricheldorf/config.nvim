@@ -1,18 +1,4 @@
 return {
-  -- {
-  --   'sainnhe/sonokai',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     -- Optionally configure and load the colorscheme
-  --     -- directly inside the plugin declaration.
-  --     vim.g.sonokai_enable_italic = true
-  --     vim.g.sonokai_style = 'andromeda'
-  --     vim.g.sonokai_better_performance = 1
-  --     vim.cmd.colorscheme 'sonokai'
-  --   end,
-  -- },
-
   {
     'navarasu/onedark.nvim',
     lazy = false,
@@ -101,62 +87,5 @@ return {
       --   long_message_to_split = true,
       -- },
     },
-  },
-  {
-    'akinsho/bufferline.nvim',
-    event = 'VeryLazy',
-    keys = {
-      { '<leader>bp', '<Cmd>BufferLineTogglePin<CR>', desc = 'Toggle Pin' },
-      { '<leader>bP', '<Cmd>BufferLineGroupClose ungrouped<CR>', desc = 'Delete Non-Pinned Buffers' },
-      { '<leader>bo', '<Cmd>BufferLineCloseOthers<CR>', desc = 'Delete Other Buffers' },
-      { '<leader>br', '<Cmd>BufferLineCloseRight<CR>', desc = 'Delete Buffers to the Right' },
-      { '<leader>bl', '<Cmd>BufferLineCloseLeft<CR>', desc = 'Delete Buffers to the Left' },
-      { '<S-h>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
-      { '<S-l>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next Buffer' },
-      { '[b', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
-      { ']b', '<cmd>BufferLineCycleNext<cr>', desc = 'Next Buffer' },
-      { '[B', '<cmd>BufferLineMovePrev<cr>', desc = 'Move buffer prev' },
-      { ']B', '<cmd>BufferLineMoveNext<cr>', desc = 'Move buffer next' },
-      { '<leader>bj', '<cmd>BufferLinePick<cr>', desc = 'Pick Buffer' },
-      { '<A-1>', '<cmd>BufferLineGoToBuffer 1<cr>', desc = 'Buffer 1' },
-      { '<A-2>', '<cmd>BufferLineGoToBuffer 2<cr>', desc = 'Buffer 2' },
-      { '<A-3>', '<cmd>BufferLineGoToBuffer 3<cr>', desc = 'Buffer 3' },
-      { '<A-4>', '<cmd>BufferLineGoToBuffer 4<cr>', desc = 'Buffer 4' },
-      { '<A-5>', '<cmd>BufferLineGoToBuffer 5<cr>', desc = 'Buffer 5' },
-      { '<A-6>', '<cmd>BufferLineGoToBuffer 6<cr>', desc = 'Buffer 6' },
-    },
-    opts = {
-      options = {
-        -- stylua: ignore
-        close_command = function(n) Snacks.bufdelete(n) end,
-        -- stylua: ignore
-        right_mouse_command = function(n) Snacks.bufdelete(n) end,
-        diagnostics = 'nvim_lsp',
-        always_show_bufferline = false,
-        show_buffer_close_icons = false,
-        show_close_icon = false,
-        color_icons = false,
-        offsets = {
-          {
-            filetype = 'neo-tree',
-            text = 'Neo-tree',
-            highlight = 'Directory',
-            text_align = 'left',
-          },
-          {
-            filetype = 'snacks_layout_box',
-          },
-        },
-      },
-    },
-    -- config = function(_, opts)
-    --   require('bufferline').setup(opts)
-    --   -- Fix bufferline when restoring a session
-    --   vim.api.nvim_create_autocmd({ 'BufAdd', 'BufDelete' }, {
-    --     callback = function()
-    --       vim.schedule(function() pcall(nvim_bufferline) end)
-    --     end,
-    --   })
-    -- end,
   },
 }

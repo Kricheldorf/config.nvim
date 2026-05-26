@@ -88,14 +88,14 @@ return {
     { '<leader>.', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
     { '<leader>S', function() Snacks.scratch.select() end, desc = 'Select Scratch Buffer' },
 
-    { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
+    -- { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
     { '<leader>,', function() Snacks.picker.buffers() end, desc = 'Buffers' },
     { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
     { '<leader>n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
     { '<leader>e', function() Snacks.explorer() end, desc = 'File Explorer' },
 
-    { '<leader>gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
+    { '<leader>gr', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
     { '<leader>gg', function() Snacks.lazygit.open() end, desc = 'LazyGit Open' },
     { '<leader>gl', function() Snacks.lazygit.log() end, desc = 'LazyGit Log' },
     { '<leader>gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
@@ -103,66 +103,48 @@ return {
     { '<leader>gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
     { '<leader>gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
     { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+
     {
-      '<leader>gm',
+      '<leader>gc',
       function()
-        local head = vim.fn.systemlist 'git rev-parse --abbrev-ref origin/HEAD'
-        local base = (head[1] and vim.v.shell_error == 0) and head[1]:gsub('^origin/', '') or 'main'
-        local out = vim.fn.systemlist { 'git', 'diff', '--name-only', base .. '...HEAD' }
-        if vim.v.shell_error ~= 0 or #out == 0 then
-          vim.notify('No files changed vs ' .. base, vim.log.levels.INFO)
-          return
-        end
-        local cwd = vim.uv.cwd()
-        local bufs = {}
-        for _, info in ipairs(vim.fn.getbufinfo { buflisted = 1 }) do
-          if info.name ~= '' then
-            local rel = vim.fs.relpath(cwd, info.name) or info.name
-            bufs[rel] = info.lastused or 0
-          end
-        end
-        local oldrank = {}
-        for i, p in ipairs(vim.v.oldfiles) do
-          local rel = vim.fs.relpath(cwd, p) or p
-          if not oldrank[rel] then oldrank[rel] = i end
-        end
-        local in_buf, not_in_buf = {}, {}
-        for _, f in ipairs(out) do
-          table.insert(bufs[f] and in_buf or not_in_buf, f)
-        end
-        table.sort(in_buf, function(a, b) return bufs[a] > bufs[b] end)
-        table.sort(not_in_buf, function(a, b) return (oldrank[a] or math.huge) < (oldrank[b] or math.huge) end)
-        local items, idx = {}, 0
-        local add = function(f, group)
-          idx = idx + 1
-          items[idx] = { idx = idx, file = f, text = f, group = group }
-        end
-        for _, f in ipairs(in_buf) do
-          add(f, 'buffer')
-        end
-        for _, f in ipairs(not_in_buf) do
-          add(f, 'other')
-        end
-        Snacks.picker.pick {
-          source = 'changed_vs_main',
-          title = 'Changed vs ' .. base,
-          items = items,
-          sort = { fields = { 'idx' } },
-          format = function(item, picker)
-            local ret = Snacks.picker.format.file(item, picker)
-            if item.group == 'buffer' then table.insert(ret, 1, { '● ', 'SnacksPickerGitStatusModified' }) end
-            return ret
+        Snacks.picker.git_log {
+          confirm = function(picker, item)
+            picker:close()
+            vim.cmd.DiffviewOpen(item.commit .. '^!')
           end,
-          preview = 'file',
         }
       end,
-      desc = 'Files changed vs main',
+      desc = 'DiffViewOpen: Open commit diff (only specific commit)',
+    },
+
+    {
+      '<leader>gM',
+      function()
+        Snacks.picker.git_log {
+          confirm = function(picker, item)
+            picker:close()
+            vim.cmd('DiffviewOpen ' .. item.commit)
+          end,
+        }
+      end,
+      desc = 'DiffViewOpen: Open commit diff to working tree (including uncommited)',
+    },
+
+    {
+      '<leader>gm',
+      '<cmd>DiffviewOpen main...HEAD<cr>',
+      desc = 'DiffViewOpen: Open diff to main',
     },
 
     {
       '<leader>gy',
       function()
-        Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
+        Snacks.gitbrowse {
+          what = 'permalink',
+          branch = 'main',
+          open = function(url) vim.fn.setreg('+', url) end,
+          notify = false,
+        }
         vim.notify 'Yanked git URL to clipboard'
       end,
       mode = { 'n', 'v' },
@@ -184,15 +166,15 @@ return {
 
     { '<leader>sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
-    { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
-    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+    -- { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
+    -- { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 
     { '<leader>bd', function() Snacks.bufdelete() end, desc = 'Delete Buffer' },
     { '<leader>bo', function() Snacks.bufdelete.other() end, desc = 'Delete Other Buffers' },
     { '<leader>ba', function() Snacks.bufdelete.all() end, desc = 'Delete All Buffers' },
 
     { '<leader>fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-    { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find Files' },
+    -- { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find Files' },
     { '<leader>fC', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
     { '<leader>fD', function() Snacks.picker.files { cwd = vim.fn.expand '~/dotfiles' } end, desc = 'Find Dotfile File' },
     { '<leader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },

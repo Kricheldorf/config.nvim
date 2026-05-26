@@ -56,3 +56,7 @@ vim.o.fillchars = 'foldclose:▸,foldopen:▾'
 --   foldinner = ' ',
 --   foldsep = ' ',
 -- }
+
+vim.opt.diffopt:append 'linematch:60' -- much better line matching
+vim.opt.diffopt:append 'algorithm:histogram' -- smarter than default myers
+vim.opt.fillchars:append 'diff:╱' -- nicer than default dashes

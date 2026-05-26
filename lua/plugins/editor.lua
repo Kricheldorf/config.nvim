@@ -130,7 +130,7 @@ return {
   {
     'rgroli/other.nvim',
     cmd = 'Other',
-    keys = { { 'gt', desc = 'Go to other file' } },
+    keys = { { '<leader>gt', desc = 'Go to other file' } },
     config = function()
       require('other-nvim').setup {
         mappings = {
@@ -160,20 +160,56 @@ return {
     },
   },
 
-  -- {
-  --   'otavioschwanck/arrow.nvim',
-  --   dependencies = {
-  --     { 'nvim-tree/nvim-web-devicons' },
-  --   },
-  --   opts = {
-  --     show_icons = true,
-  --     leader_key = ';', -- Recommended to be a single key
-  --     buffer_leader_key = 'm', -- Per Buffer Mappings
-  --   },
-  -- },
+  {
+    'otavioschwanck/arrow.nvim',
+    dependencies = {
+      { 'nvim-tree/nvim-web-devicons' },
+    },
+    config = function()
+      require('arrow').setup {
+        show_icons = true,
+        leader_key = '<C-e>', -- Recommended to be a single key
+        buffer_leader_key = '<M-e>', -- Per Buffer Mappings
+      }
+
+      -- Jump directly to bookmarked file by index
+      for i = 1, 9 do
+        vim.keymap.set('n', '<M-' .. i .. '>', function()
+          -- if the arrow menu float is focused, close it first so :edit lands in the real window
+          if vim.b.arrow_current_mode ~= nil then vim.api.nvim_win_close(0, true) end
+          require('arrow.persist').go_to(i)
+        end, { desc = 'Arrow go to file ' .. i })
+      end
+    end,
+  },
+
   {
     'MagicDuck/grug-far.nvim',
     cmd = 'GrugFar',
     opts = {},
+  },
+
+  {
+    'dmtrKovalenko/fff.nvim',
+    build = function()
+      -- downloads a prebuilt binary or falls back to cargo build
+      require('fff.download').download_or_build_binary()
+    end,
+    opts = {
+      debug = {
+        enabled = false,
+        show_scores = true,
+      },
+      prompt_vim_mode = true,
+    },
+    lazy = false, -- the plugin lazy-initialises itself
+    keys = {
+      { '<leader>ff', function() require('fff').find_files() end, desc = 'FFFind files' },
+      { '<leader><space>', function() require('fff').find_files() end, desc = 'FFFind files' },
+      { '<leader>sg', function() require('fff').live_grep() end, desc = 'LiFFFe grep' },
+      { '<leader>/', function() require('fff').live_grep() end, desc = 'LiFFFe grep' },
+      { '<leader>sz', function() require('fff').live_grep { grep = { modes = { 'fuzzy', 'plain' } } } end, desc = 'Live fffuzy grep' },
+      { '<leader>sw', function() require('fff').live_grep { query = vim.fn.expand '<cword>' } end, desc = 'Search current word' },
+    },
   },
 }

@@ -93,6 +93,9 @@ return {
       --     },
       --   },
       -- },
+      diff_opts = {
+        open_in_new_tab = true,
+      },
       terminal = {
         split_width_percentage = 0.50,
         provider = 'snacks',
