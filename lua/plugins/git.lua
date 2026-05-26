@@ -57,5 +57,78 @@ return {
       end,
     },
   },
-  { 'sindrets/diffview.nvim', opts = {} },
+  {
+    'sindrets/diffview.nvim',
+    opts = {},
+    keys = {
+      {
+        '<leader>gc',
+        function()
+          Snacks.picker.git_log {
+            confirm = function(picker, item)
+              picker:close()
+              vim.cmd.DiffviewOpen(item.commit .. '^!')
+            end,
+          }
+        end,
+        desc = 'DiffViewOpen: Open commit diff (only specific commit)',
+      },
+      {
+        '<leader>gM',
+        function()
+          Snacks.picker.git_log {
+            confirm = function(picker, item)
+              picker:close()
+              vim.cmd('DiffviewOpen ' .. item.commit)
+            end,
+          }
+        end,
+        desc = 'DiffViewOpen: Open commit diff to working tree (including uncommited)',
+      },
+      {
+        '<leader>gm',
+        '<cmd>DiffviewOpen main...HEAD<cr>',
+        desc = 'DiffViewOpen: Open diff to main',
+      },
+    },
+  },
+  {
+    'folke/snacks.nvim',
+    keys = {
+      { '<leader>gr', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
+      { '<leader>gg', function() Snacks.lazygit.open() end, desc = 'LazyGit Open' },
+      { '<leader>gl', function() Snacks.lazygit.log() end, desc = 'LazyGit Log' },
+      { '<leader>gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
+      { '<leader>gf', function() Snacks.lazygit.log_file() end, desc = 'LazyGit Log File' },
+      { '<leader>gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
+      { '<leader>gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
+      { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+      {
+        '<leader>gy',
+        function()
+          Snacks.gitbrowse {
+            what = 'permalink',
+            branch = 'main',
+            open = function(url) vim.fn.setreg('+', url) end,
+            notify = false,
+          }
+          vim.notify 'Yanked git URL to clipboard'
+        end,
+        mode = { 'n', 'v' },
+        desc = 'Git: yank permalink',
+      },
+      {
+        '<leader>gY',
+        function()
+          Snacks.gitbrowse { what = 'repo', open = function(url) vim.fn.setreg('+', url) end, notify = false }
+          vim.notify 'Yanked repo URL to clipboard'
+        end,
+        desc = 'Git: yank repo URL',
+      },
+      { '<leader>gb', function() Snacks.gitbrowse() end, mode = { 'n', 'v' }, desc = 'Git: open in browser' },
+      { '<leader>gB', function() Snacks.gitbrowse { what = 'repo' } end, desc = 'Git: open repo in browser' },
+      { '<leader>gp', function() Snacks.picker.gh_pr() end, desc = 'GitHub Pull Requests (open)' },
+      { '<leader>gP', function() Snacks.picker.gh_pr { state = 'all' } end, desc = 'GitHub Pull Requests (all)' },
+    },
+  },
 }
