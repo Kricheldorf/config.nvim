@@ -63,11 +63,26 @@ vim.api.nvim_create_autocmd('VimResized', {
   command = 'wincmd =',
 })
 
--- FIX: no auto continue comments on new line (not working)
-vim.api.nvim_create_autocmd('FileType', {
-  group = vim.api.nvim_create_augroup('no_auto_comment', {}),
-  callback = function() vim.opt_local.formatoptions:remove { 'c', 'r', 'o' } end,
+-- allow <C-w>= to equalize snacks terminal splits (snacks locks winfix on the split axis)
+-- defer because snacks sets winfix in Snacks.util.wo AFTER FileType fires and on a window that
+-- doesn't exist yet at FileType time; BufWinEnter + vim.schedule runs after snacks finishes
+vim.api.nvim_create_autocmd('BufWinEnter', {
+  group = vim.api.nvim_create_augroup('snacks_terminal_winfix', { clear = true }),
+  callback = function(args)
+    if vim.bo[args.buf].filetype ~= 'snacks_terminal' then return end
+    vim.schedule(function()
+      for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
+        vim.wo[win].winfixwidth = false
+      end
+    end)
+  end,
 })
+
+-- -- FIX: no auto continue comments on new line (not working)
+-- vim.api.nvim_create_autocmd('FileType', {
+--   group = vim.api.nvim_create_augroup('no_auto_comment', {}),
+--   callback = function() vim.opt_local.formatoptions:remove { 'c', 'r', 'o' } end,
+-- })
 
 -- syntax highlighting for dotenv files
 vim.api.nvim_create_autocmd('BufRead', {
@@ -86,4 +101,12 @@ vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
 vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
   group = 'active_cursorline',
   callback = function() vim.opt_local.cursorline = false end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('oil_neotest', { clear = true }),
+  pattern = 'oil',
+  callback = function()
+    vim.keymap.set('n', '<leader>tr', function() require('neotest').run.run(require('oil').get_current_dir()) end, { buffer = true, desc = 'Test oil dir' })
+  end,
 })
