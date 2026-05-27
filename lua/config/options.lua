@@ -3,12 +3,6 @@ vim.o.relativenumber = true
 
 vim.o.mouse = 'a'
 
-vim.filetype.add {
-  extension = {
-    ['http'] = 'http',
-  },
-}
-
 vim.o.showmode = false
 
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
@@ -60,3 +54,7 @@ vim.o.fillchars = 'foldclose:▸,foldopen:▾'
 vim.opt.diffopt:append 'linematch:60' -- much better line matching
 vim.opt.diffopt:append 'algorithm:histogram' -- smarter than default myers
 vim.opt.fillchars:append 'diff:╱' -- nicer than default dashes
+
+vim.o.autowriteall = true
+
+vim.opt.winbar = '%=%m %f '

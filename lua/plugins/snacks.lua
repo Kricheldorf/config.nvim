@@ -4,6 +4,12 @@ return {
   lazy = false,
   ---@type snacks.Config
   opts = {
+    ---@type table<string, snacks.win.Config>
+    styles = {
+      zoom_indicator = {
+        text = function() return '󰊓 ' .. vim.api.nvim_eval_statusline('%m %f', { winid = 0 }).str end,
+      },
+    },
     bigfile = { enabled = true },
     explorer = { enabled = true },
     gitbrowse = { enabled = true },
@@ -52,6 +58,7 @@ return {
         max_height = 40,
       },
     },
+    zen = { enabled = true },
     indent = { enabled = true },
     input = { enabled = true },
     lazygit = { enabled = true },
@@ -88,7 +95,7 @@ return {
     { '<leader>.', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
     { '<leader>S', function() Snacks.scratch.select() end, desc = 'Select Scratch Buffer' },
 
-    -- { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
+    { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
     { '<leader>,', function() Snacks.picker.buffers() end, desc = 'Buffers' },
     { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
@@ -97,15 +104,15 @@ return {
 
     { '<leader>sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
-    -- { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
-    -- { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+    { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
+    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 
     { '<leader>bd', function() Snacks.bufdelete() end, desc = 'Delete Buffer' },
     { '<leader>bo', function() Snacks.bufdelete.other() end, desc = 'Delete Other Buffers' },
     { '<leader>ba', function() Snacks.bufdelete.all() end, desc = 'Delete All Buffers' },
 
     { '<leader>fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-    -- { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find Files' },
+    { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find Files' },
     { '<leader>fC', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
     { '<leader>fD', function() Snacks.picker.files { cwd = vim.fn.expand '~/dotfiles' } end, desc = 'Find Dotfile File' },
     { '<leader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
@@ -153,5 +160,6 @@ return {
         }
       end,
     },
+    { '<leader>wf', function() Snacks.zen.zoom() end, desc = 'Zoom pane' },
   },
 }
