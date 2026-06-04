@@ -56,5 +56,7 @@ vim.opt.diffopt:append 'algorithm:histogram' -- smarter than default myers
 vim.opt.fillchars:append 'diff:╱' -- nicer than default dashes
 
 vim.o.autowriteall = true
+-- pair with checktime autocmd
+vim.opt.autoread = true
 
 vim.opt.winbar = '%=%m %f '

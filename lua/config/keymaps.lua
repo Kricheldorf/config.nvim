@@ -4,6 +4,11 @@ vim.keymap.set('n', '<c-[>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<C-s>', '<cmd>update<CR>')
 vim.keymap.set('n', 'zr', '<cmd>restart<CR>')
 vim.keymap.set('n', 'zd', '<cmd>AutoSession delete<CR>', { desc = 'Delete AutoSession' })
+-- originally on default nvim keymap ZR is restart, I'm changing to delete AutoSession + restart
+vim.keymap.set('n', 'ZR', function()
+  vim.cmd 'AutoSession delete'
+  vim.cmd 'restart'
+end, { desc = 'Delete AutoSession and restart' })
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -11,6 +16,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 vim.keymap.set('t', '<c-[>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', { noremap = true, silent = true, desc = 'Term in normal mode and leave to left buffer' })
+vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', { noremap = true, silent = true, desc = 'Term in normal mode and leave to right buffer' })
+vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', { noremap = true, silent = true, desc = 'Term in normal mode and leave to up buffer' })
 
 -- Split navigation
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })

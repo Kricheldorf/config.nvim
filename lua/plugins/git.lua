@@ -74,7 +74,7 @@ return {
         desc = 'DiffViewOpen: Open commit diff (only specific commit)',
       },
       {
-        '<leader>gM',
+        '<leader>gC',
         function()
           Snacks.picker.git_log {
             confirm = function(picker, item)
@@ -83,12 +83,17 @@ return {
             end,
           }
         end,
-        desc = 'DiffViewOpen: Open commit diff to working tree (including uncommited)',
+        desc = 'DiffViewOpen: Open commit diff to working tree (+ uncommited)',
       },
       {
         '<leader>gm',
         '<cmd>DiffviewOpen main...HEAD<cr>',
         desc = 'DiffViewOpen: Open diff to main',
+      },
+      {
+        '<leader>gM',
+        '<cmd>DiffviewOpen main...HEAD --imply-local<cr>',
+        desc = 'DiffViewOpen: Open diff to main (+ uncommitted)',
       },
     },
   },

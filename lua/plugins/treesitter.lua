@@ -5,18 +5,14 @@ return {
     build = ':TSUpdate',
     branch = 'main',
     config = function()
+      -- c, lua, markdown, markdown_inline, query, vim, vimdoc ship with nvim core
+      -- (see /usr/share/nvim/runtime/parser) — managing them here shadows the
+      -- bundled parser with a stale .so and breaks queries. Leave them to nvim.
       local parsers = {
         'bash',
-        'c',
         'diff',
         'html',
-        'lua',
         'luadoc',
-        'markdown',
-        'markdown_inline',
-        'query',
-        'vim',
-        'vimdoc',
         'regex',
         'javascript',
         'typescript',

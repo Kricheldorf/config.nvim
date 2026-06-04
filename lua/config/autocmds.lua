@@ -110,3 +110,8 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.keymap.set('n', '<leader>tr', function() require('neotest').run.run(require('oil').get_current_dir()) end, { buffer = true, desc = 'Test oil dir' })
   end,
 })
+
+-- trigger checktime on certain events to reload file if different from disk. Pair with autoread option
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
+  command = 'checktime',
+})

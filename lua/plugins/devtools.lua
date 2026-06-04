@@ -1,7 +1,9 @@
 return {
   {
     'mistweaverco/kulala.nvim',
+    version = '*',
     opts = {
+      default_env = 'local',
       ui = {
         scratchpad_default_contents = {
           'POST {{base_url}}/orders HTTP/1.1',
@@ -17,11 +19,15 @@ return {
       lsp = {
         enable = true,
         formatter = false,
-        filetypes = { 'http', 'rest', 'json', 'yaml', 'bruno' },
+        filetypes = { 'http' },
       },
       global_keymaps = true,
       global_keymaps_prefix = '<leader>r',
       kulala_keymaps_prefix = '',
+      kulala_keymaps = {
+        ['Previous tab'] = false,
+        ['Next tab'] = false,
+      },
     },
   },
   -- TODO: Review necessity and usage. Startup time was around 12ms, very impactful if not used
