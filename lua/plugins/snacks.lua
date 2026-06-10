@@ -54,8 +54,8 @@ return {
       doc = {
         inline = true,
         float = true,
-        max_width = 80,
-        max_height = 40,
+        max_width = 120,
+        max_height = 60,
       },
     },
     zen = { enabled = true },
@@ -161,5 +161,6 @@ return {
       end,
     },
     { '<leader>wf', function() Snacks.zen.zoom() end, desc = 'Zoom pane' },
+    { '<leader>mi', function() Snacks.image.hover() end, desc = 'Image float (hover)' },
   },
 }

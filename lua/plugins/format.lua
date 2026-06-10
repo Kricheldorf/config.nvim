@@ -31,18 +31,7 @@ return {
       typescript = { 'prettierd', 'prettier', stop_after_first = true },
       json = { 'prettierd', 'prettier', stop_after_first = true },
       jsonc = { 'prettierd', 'prettier', stop_after_first = true },
-      sql = { 'sqlfluff' },
-    },
-    formatters = {
-      sqlfluff = {
-        inherit = false,
-        command = 'sqlfluff',
-        args = { 'format', '--dialect=postgres', '-' },
-        stdin = true,
-        require_cwd = false,
-        cwd = nil,
-        exit_codes = { 0, 1 },
-      },
+      sql = { 'pg_format' },
     },
   },
 }

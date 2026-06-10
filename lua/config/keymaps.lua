@@ -10,6 +10,9 @@ vim.keymap.set('n', 'ZR', function()
   vim.cmd 'restart'
 end, { desc = 'Delete AutoSession and restart' })
 
+vim.keymap.set('n', 'zs', '<cmd>AutoSession save<CR>', { desc = 'Save session' })
+vim.keymap.set('n', 'zS', '<cmd>AutoSession search<CR>', { desc = 'Search/open sessions' })
+
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Terminal mode
@@ -20,10 +23,10 @@ vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', { noremap = true, silent = tru
 vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', { noremap = true, silent = true, desc = 'Term in normal mode and leave to up buffer' })
 
 -- Split navigation
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set({ 'n', 'x' }, '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set({ 'n', 'x' }, '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set({ 'n', 'x' }, '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set({ 'n', 'x' }, '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Scroll + center
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
