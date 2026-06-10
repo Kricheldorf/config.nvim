@@ -18,7 +18,9 @@ return {
       bo = {
         filetype = 'snacks_terminal',
       },
-      wo = {},
+      wo = {
+        winfixwidth = false, -- allow <C-w>= to equalize left/right terminal splits
+      },
       stack = true, -- when enabled, multiple split windows with the same position will be stacked together (useful for terminals)
       keys = {
         q = 'hide',
