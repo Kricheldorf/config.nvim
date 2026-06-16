@@ -54,6 +54,7 @@ return {
 
   {
     'coder/claudecode.nvim',
+    version = '*',
     dependencies = { 'folke/snacks.nvim' },
     config = true,
     keys = {
