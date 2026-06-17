@@ -15,39 +15,10 @@ return {
     gitbrowse = { enabled = true },
     terminal = {
       enabled = true,
-      bo = {
-        filetype = 'snacks_terminal',
-      },
-      wo = {
-        winfixwidth = false, -- allow <C-w>= to equalize left/right terminal splits
-      },
-      stack = true, -- when enabled, multiple split windows with the same position will be stacked together (useful for terminals)
-      keys = {
-        q = 'hide',
-        gf = function(self)
-          local f = vim.fn.findfile(vim.fn.expand '<cfile>', '**')
-          if f == '' then
-            Snacks.notify.warn 'No file under cursor'
-          else
-            self:hide()
-            vim.schedule(function() vim.cmd('e ' .. f) end)
-          end
-        end,
-        term_normal = {
-          '<esc>',
-          function(self)
-            self.esc_timer = self.esc_timer or (vim.uv or vim.loop).new_timer()
-            if self.esc_timer:is_active() then
-              self.esc_timer:stop()
-              vim.cmd 'stopinsert'
-            else
-              self.esc_timer:start(200, 0, function() end)
-              return '<esc>'
-            end
-          end,
-          mode = 't',
-          expr = true,
-          desc = 'Double escape to normal mode',
+      win = {
+        keys = {
+          -- drop laggy default esc map; Ctrl-Q -> normal mode (flow control is off, -ixon)
+          term_normal = { '<C-q>', '<cmd>stopinsert<cr>', mode = 't', desc = 'Terminal normal mode' },
         },
       },
     },
@@ -94,12 +65,12 @@ return {
     },
   },
   keys = {
-    { '<leader>.', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
+    { '<leader>,', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
     { '<leader>S', function() Snacks.scratch.select() end, desc = 'Select Scratch Buffer' },
 
-    { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
-    { '<leader>,', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-    { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
+    -- <leader><space> reassigned to fff.nvim for testing (see lua/plugins/fff.lua)
+    { '<leader>fs', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
+    -- { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
     { '<leader>n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
     { '<leader>e', function() Snacks.explorer() end, desc = 'File Explorer' },
@@ -162,7 +133,8 @@ return {
         }
       end,
     },
-    { '<leader>wf', function() Snacks.zen.zoom() end, desc = 'Zoom pane' },
+    { '<C-w>m', function() Snacks.zen.zoom() end, desc = 'Zoom pane' },
+    { '<C-w><C-m>', function() Snacks.zen.zoom() end, desc = 'Zoom pane' },
     { '<leader>mi', function() Snacks.image.hover() end, desc = 'Image float (hover)' },
   },
 }

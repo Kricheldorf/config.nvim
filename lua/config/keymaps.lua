@@ -16,8 +16,8 @@ vim.keymap.set('n', 'zS', '<cmd>AutoSession search<CR>', { desc = 'Search/open s
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-vim.keymap.set('t', '<c-[>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+-- exit to normal via <C-q> (snacks) or builtin <C-\><C-n>; no <Esc> map here so
+-- Esc-prefixed sequences (arrows/F-keys) don't stall on timeoutlen
 vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', { noremap = true, silent = true, desc = 'Term in normal mode and leave to left buffer' })
 vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', { noremap = true, silent = true, desc = 'Term in normal mode and leave to right buffer' })
 vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', { noremap = true, silent = true, desc = 'Term in normal mode and leave to up buffer' })
@@ -27,6 +27,12 @@ vim.keymap.set({ 'n', 'x' }, '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the 
 vim.keymap.set({ 'n', 'x' }, '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set({ 'n', 'x' }, '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set({ 'n', 'x' }, '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- Resize focused split to 75% of screen width (C-/ may arrive as C-_ in terminals)
+local function widen_75() vim.cmd('vertical resize ' .. math.floor(vim.o.columns * 0.75)) end
+for _, lhs in ipairs { '<C-w>/', '<C-w><C-/>', '<C-w><C-_>' } do
+  vim.keymap.set('n', lhs, widen_75, { desc = 'Focused split to 75% width' })
+end
 
 -- Scroll + center
 vim.keymap.set('n', '<C-d>', '<C-d>zz')

@@ -66,13 +66,34 @@ vim.api.nvim_create_autocmd('VimResized', {
 -- allow <C-w>= to equalize snacks terminal splits (snacks locks winfix on the split axis)
 -- defer because snacks sets winfix in Snacks.util.wo AFTER FileType fires and on a window that
 -- doesn't exist yet at FileType time; BufWinEnter + vim.schedule runs after snacks finishes
+local snacks_term_winfix_group = vim.api.nvim_create_augroup('snacks_terminal_winfix', { clear = true })
+-- snacks locks one axis depending on split orientation (winfixheight for bottom/top,
+-- winfixwidth for left/right); clear both so <C-w>= always equalizes
+local function clear_term_winfix(win)
+  vim.wo[win].winfixwidth = false
+  vim.wo[win].winfixheight = false
+end
+
 vim.api.nvim_create_autocmd('BufWinEnter', {
-  group = vim.api.nvim_create_augroup('snacks_terminal_winfix', { clear = true }),
+  group = snacks_term_winfix_group,
   callback = function(args)
     if vim.bo[args.buf].filetype ~= 'snacks_terminal' then return end
     vim.schedule(function()
       for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
-        vim.wo[win].winfixwidth = false
+        clear_term_winfix(win)
+      end
+    end)
+  end,
+})
+
+-- auto-session persists winfix per window (sessionoptions has localoptions+terminal) and
+-- re-applies it AFTER BufWinEnter on restore, so re-clear once the session finishes loading
+vim.api.nvim_create_autocmd('SessionLoadPost', {
+  group = snacks_term_winfix_group,
+  callback = function()
+    vim.schedule(function()
+      for _, win in ipairs(vim.api.nvim_list_wins()) do
+        if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == 'snacks_terminal' then clear_term_winfix(win) end
       end
     end)
   end,
