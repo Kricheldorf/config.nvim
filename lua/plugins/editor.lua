@@ -178,7 +178,7 @@ return {
           if #entries == 0 then return nil end
           return 'lua for _,e in ipairs({'
             .. table.concat(entries, ',')
-            .. "}) do local b=vim.fn.bufnr(e.file,true); vim.fn.bufload(b); require('dap.breakpoints').set({condition=e.condition,log_message=e.log_message,hit_condition=e.hit_condition},b,e.line) end"
+            .. "}) do if vim.fn.filereadable(e.file)==1 then pcall(function() local b=vim.fn.bufnr(e.file,true); vim.fn.bufload(b); require('dap.breakpoints').set({condition=e.condition,log_message=e.log_message,hit_condition=e.hit_condition},b,e.line) end) end end"
         end,
       },
     },

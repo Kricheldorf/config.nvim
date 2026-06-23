@@ -29,7 +29,14 @@ fi
 if ! git -C "$repo" rev-parse --verify --quiet "$new^{commit}" >/dev/null; then
   new="$(git -C "$repo" rev-parse --verify --quiet origin/HEAD 2>/dev/null \
         || git -C "$repo" symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null \
-        || echo origin)"
+        || true)"
+fi
+
+# Bail rather than diff against an unresolved ref: an empty/invalid NEW would
+# make `old..` diff to nothing and report a misleading CLEAN.
+if [[ -z "$new" ]] || ! git -C "$repo" rev-parse --verify --quiet "$new^{commit}" >/dev/null; then
+  echo "could not resolve NEW ref in $repo (try: git -C $repo fetch)" >&2
+  exit 2
 fi
 
 range="${old}..${new}"

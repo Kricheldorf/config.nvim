@@ -140,46 +140,17 @@ return {
           restart = true,
           skipFiles = { '<node_internals>/**', 'node_modules/**' },
         },
-        -- {
-        --   type = 'pwa-node',
-        --   request = 'attach',
-        --   name = 'Attach to Node process (pick PID)',
-        --   processId = require('dap.utils').pick_process,
-        --   cwd = '${workspaceFolder}',
-        -- },
-        -- {
-        --   type = 'pwa-node',
-        --   request = 'launch',
-        --   name = 'Launch current file (Node)',
-        --   program = '${file}',
-        --   cwd = '${workspaceFolder}',
-        -- },
-        -- {
-        --   type = 'pwa-node',
-        --   request = 'launch',
-        --   name = 'Launch current file (ts-node)',
-        --   runtimeExecutable = 'ts-node',
-        --   program = '${file}',
-        --   cwd = '${workspaceFolder}',
-        -- },
-        -- {
-        --   type = 'pwa-node',
-        --   request = 'launch',
-        --   name = 'Debug Jest tests',
-        --   runtimeExecutable = 'node',
-        --   runtimeArgs = { './node_modules/.bin/jest', '--runInBand' },
-        --   rootPath = '${workspaceFolder}',
-        --   cwd = '${workspaceFolder}',
-        --   console = 'integratedTerminal',
-        --   internalConsoleOptions = 'neverOpen',
-        -- },
-        -- {
-        --   type = 'pwa-chrome',
-        --   request = 'launch',
-        --   name = 'Launch Chrome (localhost:3000)',
-        --   url = 'http://localhost:3000',
-        --   webRoot = '${workspaceFolder}',
-        -- },
+        {
+          -- fallback for when the Next worker is a child process and port-attach won't bind:
+          -- pick the next-server PID directly (referenced by the server config's comment above).
+          type = 'pwa-node',
+          request = 'attach',
+          name = 'Attach to Node process (pick PID)',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+          sourceMaps = true,
+          skipFiles = { '<node_internals>/**', 'node_modules/**' },
+        },
       }
     end
   end,
