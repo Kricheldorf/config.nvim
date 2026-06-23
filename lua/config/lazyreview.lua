@@ -29,11 +29,13 @@ end
 -- short sha helper
 local function short(sha) return sha and sha:sub(1, 7) or nil end
 
-function M.review()
+-- Fetch all reviewable plugins and resolve their pending target, then call
+-- done(updates, skipped, manual). Async; done always fires (incl. empty).
+function M.collect(done)
   local ok, cfg = pcall(require, 'lazy.core.config')
   if not ok then
     vim.notify('lazy.nvim not loaded', vim.log.levels.ERROR)
-    return
+    return done({}, {}, {})
   end
   local lgit = require 'lazy.manage.git'
 
@@ -46,12 +48,7 @@ function M.review()
     end
   end
 
-  if #plugins == 0 then
-    vim.notify('LazyReview: no reviewable plugins', vim.log.levels.WARN)
-    return
-  end
-
-  vim.notify(('LazyReview: fetching %d plugins…'):format(#plugins))
+  if #plugins == 0 then return done({}, {}, {}) end
 
   local pending = #plugins
   local updates = {} -- { name, url, old, new }
@@ -88,10 +85,32 @@ function M.review()
         end
 
         pending = pending - 1
-        if pending == 0 then M.present(updates, skipped, manual) end
+        if pending == 0 then done(updates, skipped, manual) end
       end)
     end)
   end
+end
+
+function M.review()
+  local ok = pcall(require, 'lazy.core.config')
+  if ok then vim.notify 'LazyReview: fetching plugins…' end
+  M.collect(function(updates, skipped, manual) M.present(updates, skipped, manual) end)
+end
+
+-- Headless entry: `nvim --headless +'lua require("config.lazyreview").print_updates()' +qa`
+-- Prints one tab-separated `LRUPDATE\t<name>\t<old>\t<new>` line per pending
+-- update so an external tool can grep them. Blocks until fetches complete.
+function M.print_updates()
+  local done = false
+  M.collect(function(updates)
+    table.sort(updates, function(a, b) return a.name < b.name end)
+    for _, u in ipairs(updates) do
+      io.write(('LRUPDATE\t%s\t%s\t%s\n'):format(u.name, u.old, u.new))
+    end
+    io.flush()
+    done = true
+  end)
+  vim.wait(120000, function() return done end, 100)
 end
 
 -- Open a scratch float showing `lines`; line->url map makes <CR> open that

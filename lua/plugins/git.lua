@@ -7,11 +7,9 @@ return {
     ---@diagnostic disable-next-line: missing-fields
     opts = {
       signs = {
-        add = { text = '+' }, ---@diagnostic disable-line: missing-fields
-        change = { text = '~' }, ---@diagnostic disable-line: missing-fields
-        delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
-        topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
-        changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
+        delete = { text = '▁', show_count = true },
+        topdelete = { text = '▔', show_count = true },
+        changedelete = { text = '~', show_count = true },
       },
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
@@ -26,7 +24,7 @@ return {
           if vim.wo.diff then
             vim.cmd.normal { ']c', bang = true }
           else
-            gitsigns.nav_hunk 'next'
+            gitsigns.nav_hunk('next', { target = 'all' })
           end
         end, { desc = 'Jump to next git [c]hange' })
 
@@ -34,7 +32,7 @@ return {
           if vim.wo.diff then
             vim.cmd.normal { '[c', bang = true }
           else
-            gitsigns.nav_hunk 'prev'
+            gitsigns.nav_hunk('prev', { target = 'all' })
           end
         end, { desc = 'Jump to previous git [c]hange' })
 
@@ -47,6 +45,7 @@ return {
         map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
         map('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'git preview hunk [i]nline' })
         map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'git [b]lame line' })
+        map('n', '<leader>hB', gitsigns.blame, { desc = 'git [B]lame buffer' })
         map('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index' })
         map('n', '<leader>hD', function() gitsigns.diffthis '@' end, { desc = 'git [D]iff against last commit' })
         map('n', '<leader>hQ', function() gitsigns.setqflist 'all' end)

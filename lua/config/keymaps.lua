@@ -28,6 +28,9 @@ vim.keymap.set({ 'n', 'x' }, '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the 
 vim.keymap.set({ 'n', 'x' }, '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set({ 'n', 'x' }, '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- <C-w>= : clear winfix on all windows first (snacks/sessions re-pin them), then equalize
+vim.keymap.set('n', '<C-w>=', '<cmd>windo set nowinfixwidth nowinfixheight<cr><cmd>wincmd =<cr>', { desc = 'Equalize splits (clear winfix)' })
+
 -- Resize focused split to 75% of screen width (C-/ may arrive as C-_ in terminals)
 local function widen_75() vim.cmd('vertical resize ' .. math.floor(vim.o.columns * 0.75)) end
 for _, lhs in ipairs { '<C-w>/', '<C-w><C-/>', '<C-w><C-_>' } do

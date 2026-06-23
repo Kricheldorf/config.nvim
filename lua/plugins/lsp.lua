@@ -64,42 +64,27 @@ return {
 
       ---@type table<string, vim.lsp.Config>
       local servers = {
-        stylua = {},
         pyright = {},
         eslint = {
           settings = { workingDirectories = { mode = 'auto' } },
         },
-        sqlfluff = {},
         lua_ls = {
           root_markers = { '.luarc.json', '.luarc.jsonc', '.luacheckrc', '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml', '.git', 'lua' },
-          on_init = function(client)
-            if client.workspace_folders then
-              local path = client.workspace_folders[1].name
-              if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
-            end
-
-            client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-              runtime = {
-                version = 'LuaJIT',
-                path = { 'lua/?.lua', 'lua/?/init.lua' },
-              },
-              workspace = {
-                checkThirdParty = false,
-                library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
-                  '${3rd}/luv/library',
-                  '${3rd}/busted/library',
-                }),
-              },
-            })
-          end,
+          -- Workspace library is provided on-demand by lazydev.nvim, so no giant
+          -- runtime scan here (which previously caused a double "Loading workspace").
           settings = {
-            Lua = {},
+            Lua = {
+              runtime = { version = 'LuaJIT' },
+              workspace = { checkThirdParty = false },
+              completion = { callSnippet = 'Replace' },
+            },
           },
         },
       }
 
       local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {})
+      -- Tools that are not LSP servers but should still be installed by Mason.
+      vim.list_extend(ensure_installed, { 'stylua', 'sqlfluff' })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -108,6 +93,17 @@ return {
         vim.lsp.enable(name)
       end
     end,
+  },
+
+  {
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found.
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
   },
 
   {

@@ -27,13 +27,19 @@ return {
       documentation = { auto_show = true, auto_show_delay_ms = 500 },
     },
     sources = {
-      default = { 'lsp', 'path', 'snippets', 'buffer' },
+      default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer' },
       per_filetype = {
         sql = { 'snippets', 'dadbod', 'buffer' },
         mysql = { 'snippets', 'dadbod', 'buffer' },
         plsql = { 'snippets', 'dadbod', 'buffer' },
       },
       providers = {
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          -- Show lazydev completions before LSP.
+          score_offset = 100,
+        },
         dadbod = {
           name = 'Dadbod',
           module = 'vim_dadbod_completion.blink',

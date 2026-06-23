@@ -1,22 +1,28 @@
--- TODO: change Breakpoint symbol
--- TODO: change keymap to same as chrome dev tools
 return {
   'mfussenegger/nvim-dap',
   dependencies = {
     'igorlfs/nvim-dap-view',
     'mason-org/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
+    'theHamsta/nvim-dap-virtual-text',
   },
   keys = {
-    { '<F5>', function() require('dap').continue() end, desc = 'Debug: Start/Continue' },
-    { '<F1>', function() require('dap').step_into() end, desc = 'Debug: Step Into' },
-    { '<F2>', function() require('dap').step_over() end, desc = 'Debug: Step Over' },
-    { '<F3>', function() require('dap').step_out() end, desc = 'Debug: Step Out' },
+    -- keys mirror Chrome DevTools debugger controls
+    { '<F8>', function() require('dap').continue() end, desc = 'Debug: Start/Continue (Resume)' },
+    { '<F10>', function() require('dap').step_over() end, desc = 'Debug: Step Over' },
+    { '<F11>', function() require('dap').step_into() end, desc = 'Debug: Step Into' },
+    { '<S-F11>', function() require('dap').step_out() end, desc = 'Debug: Step Out' },
+    { '<F23>', function() require('dap').step_out() end, desc = 'Debug: Step Out (Shift+F11 alias)' }, -- many terminals (kitty) report Shift+F11 as F23
     { '<leader>db', function() require('dap').toggle_breakpoint() end, desc = 'Debug: Toggle Breakpoint' },
     { '<leader>dB', function() require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ') end, desc = 'Debug: Conditional Breakpoint' },
+    { '<leader>dL', function() require('dap').set_breakpoint(nil, nil, vim.fn.input 'Log point message: ') end, desc = 'Debug: Log Point' },
+    { '<leader>dq', function() require('dap').list_breakpoints() end, desc = 'Debug: List Breakpoints (quickfix)' },
     { '<F7>', function() require('dap-view').toggle() end, desc = 'Debug: Toggle DAP View' },
     { '<leader>dr', function() require('dap').repl.open() end, desc = 'Debug: Open REPL' },
     { '<leader>dl', function() require('dap').run_last() end, desc = 'Debug: Run Last' },
+    { '<leader>de', function() require('dap.ui.widgets').hover() end, mode = { 'n', 'v' }, desc = 'Debug: Eval under cursor' },
+    { '<leader>dc', function() require('dap').run_to_cursor() end, desc = 'Debug: Run to Cursor' },
+    { '<leader>dv', function() require('nvim-dap-virtual-text').toggle() end, desc = 'Debug: Toggle Virtual Text' },
   },
   config = function()
     local dap = require 'dap'
@@ -28,6 +34,29 @@ return {
     }
 
     require('dap-view').setup {}
+
+    -- inline variable values next to code during a session
+    require('nvim-dap-virtual-text').setup {
+      commented = true, -- show as a comment so it blends with your colorscheme
+    }
+
+    -- prettier gutter signs (replaces default 'B'/'C'/'L'/'R' letters); colors follow the colorscheme
+    vim.api.nvim_set_hl(0, 'DapBreakpoint', { link = 'DiagnosticError' }) -- red
+    vim.api.nvim_set_hl(0, 'DapBreakpointCondition', { link = 'DiagnosticWarn' }) -- yellow
+    vim.api.nvim_set_hl(0, 'DapLogPoint', { link = 'DiagnosticInfo' }) -- blue
+    vim.api.nvim_set_hl(0, 'DapStopped', { link = 'DiagnosticOk' }) -- green
+    local g = vim.fn.nr2char -- build nerd-font glyphs from codepoints (avoids byte mangling)
+    local signs = {
+      DapBreakpoint = { text = g(0xf111), texthl = 'DapBreakpoint' }, --  filled circle
+      DapBreakpointCondition = { text = g(0xf192), texthl = 'DapBreakpointCondition' }, --  dot-in-circle
+      DapBreakpointRejected = { text = g(0xf111), texthl = 'DapBreakpoint' }, -- same as normal: unverified/rejected look identical
+      DapLogPoint = { text = g(0xf111), texthl = 'DapLogPoint' }, --  filled circle (blue)
+      DapStopped = { text = g(0xf061), texthl = 'DapStopped', linehl = 'DapStoppedLine', numhl = 'DapStopped' }, --  arrow-right
+    }
+    vim.api.nvim_set_hl(0, 'DapStoppedLine', { link = 'Visual' })
+    for name, opts in pairs(signs) do
+      vim.fn.sign_define(name, opts)
+    end
 
     local function set_debug_keymaps()
       local opts = { silent = true, noremap = true }
@@ -48,6 +77,7 @@ return {
       require('dap-view').open()
       set_debug_keymaps()
     end
+
     dap.listeners.before.event_terminated['dap-view'] = function()
       require('dap-view').close()
       del_debug_keymaps()
@@ -85,45 +115,71 @@ return {
           skipFiles = { '<node_internals>/**', 'node_modules/**' },
         },
         {
-          type = 'pwa-node',
-          request = 'attach',
-          name = 'Attach to Node process (pick PID)',
-          processId = require('dap.utils').pick_process,
-          cwd = '${workspaceFolder}',
-        },
-        {
-          type = 'pwa-node',
-          request = 'launch',
-          name = 'Launch current file (Node)',
-          program = '${file}',
-          cwd = '${workspaceFolder}',
-        },
-        {
-          type = 'pwa-node',
-          request = 'launch',
-          name = 'Launch current file (ts-node)',
-          runtimeExecutable = 'ts-node',
-          program = '${file}',
-          cwd = '${workspaceFolder}',
-        },
-        {
-          type = 'pwa-node',
-          request = 'launch',
-          name = 'Debug Jest tests',
-          runtimeExecutable = 'node',
-          runtimeArgs = { './node_modules/.bin/jest', '--runInBand' },
-          rootPath = '${workspaceFolder}',
-          cwd = '${workspaceFolder}',
-          console = 'integratedTerminal',
-          internalConsoleOptions = 'neverOpen',
-        },
-        {
+          -- Next.js client-side: components/hooks/browser code in shipix-app.
+          -- webRoot must point at the app (not monorepo root) so sourcemaps resolve.
           type = 'pwa-chrome',
           request = 'launch',
-          name = 'Launch Chrome (localhost:3000)',
+          name = 'Next client (shipix-app)',
           url = 'http://localhost:3000',
-          webRoot = '${workspaceFolder}',
+          webRoot = '${workspaceFolder}/apps/shipix-app',
+          runtimeExecutable = '/usr/bin/brave', -- Brave is Chromium-based; pwa-chrome drives it fine
+          sourceMaps = true,
+          skipFiles = { '<node_internals>/**', 'node_modules/**' },
         },
+        {
+          -- Next.js server-side: RSC, route handlers, server actions, getServerSideProps.
+          -- Run dev server with: NODE_OPTIONS='--inspect' npm run start:app:dev
+          -- If breakpoints stay unbound, the Next worker is a child process -> use
+          -- "Attach to Node process (pick PID)" and pick the next-server PID instead.
+          type = 'pwa-node',
+          request = 'attach',
+          name = 'Next server (shipix-app, port 9229)',
+          port = 9229,
+          cwd = '${workspaceFolder}/apps/shipix-app',
+          sourceMaps = true,
+          restart = true,
+          skipFiles = { '<node_internals>/**', 'node_modules/**' },
+        },
+        -- {
+        --   type = 'pwa-node',
+        --   request = 'attach',
+        --   name = 'Attach to Node process (pick PID)',
+        --   processId = require('dap.utils').pick_process,
+        --   cwd = '${workspaceFolder}',
+        -- },
+        -- {
+        --   type = 'pwa-node',
+        --   request = 'launch',
+        --   name = 'Launch current file (Node)',
+        --   program = '${file}',
+        --   cwd = '${workspaceFolder}',
+        -- },
+        -- {
+        --   type = 'pwa-node',
+        --   request = 'launch',
+        --   name = 'Launch current file (ts-node)',
+        --   runtimeExecutable = 'ts-node',
+        --   program = '${file}',
+        --   cwd = '${workspaceFolder}',
+        -- },
+        -- {
+        --   type = 'pwa-node',
+        --   request = 'launch',
+        --   name = 'Debug Jest tests',
+        --   runtimeExecutable = 'node',
+        --   runtimeArgs = { './node_modules/.bin/jest', '--runInBand' },
+        --   rootPath = '${workspaceFolder}',
+        --   cwd = '${workspaceFolder}',
+        --   console = 'integratedTerminal',
+        --   internalConsoleOptions = 'neverOpen',
+        -- },
+        -- {
+        --   type = 'pwa-chrome',
+        --   request = 'launch',
+        --   name = 'Launch Chrome (localhost:3000)',
+        --   url = 'http://localhost:3000',
+        --   webRoot = '${workspaceFolder}',
+        -- },
       }
     end
   end,

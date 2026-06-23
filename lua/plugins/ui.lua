@@ -29,6 +29,7 @@ return {
       icons = { mappings = vim.g.have_nerd_font },
       spec = {
         { '<leader>b', group = '[B]uffer' },
+        { '<leader>B', group = '[B]uffer Tabs' },
         { '<leader>d', group = '[D]ebug' },
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },

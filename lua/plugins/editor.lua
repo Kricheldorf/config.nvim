@@ -157,6 +157,30 @@ return {
     ---@type AutoSession.Config
     opts = {
       suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/', '~/Code', '~/.config', '~/dotfiles' },
+      -- persist nvim-dap breakpoints across sessions (not covered by sessionoptions)
+      save_extra_cmds = {
+        function()
+          local ok, dap_bp = pcall(require, 'dap.breakpoints')
+          if not ok then return nil end
+          local entries = {}
+          for bufnr, buf_bps in pairs(dap_bp.get()) do
+            local fname = vim.api.nvim_buf_get_name(bufnr)
+            if fname ~= '' then
+              for _, b in ipairs(buf_bps) do
+                local q = function(s) return s and string.format('%q', s) or 'nil' end
+                entries[#entries + 1] = string.format(
+                  '{file=%q,line=%d,condition=%s,log_message=%s,hit_condition=%s}',
+                  fname, b.line, q(b.condition), q(b.logMessage), q(b.hitCondition)
+                )
+              end
+            end
+          end
+          if #entries == 0 then return nil end
+          return 'lua for _,e in ipairs({'
+            .. table.concat(entries, ',')
+            .. "}) do local b=vim.fn.bufnr(e.file,true); vim.fn.bufload(b); require('dap.breakpoints').set({condition=e.condition,log_message=e.log_message,hit_condition=e.hit_condition},b,e.line) end"
+        end,
+      },
     },
   },
 
