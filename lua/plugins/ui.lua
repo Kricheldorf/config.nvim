@@ -30,6 +30,7 @@ return {
       spec = {
         { '<leader>b', group = '[B]uffer' },
         { '<leader>B', group = '[B]uffer Tabs' },
+        { '<leader>c', group = '[C]ode' },
         { '<leader>d', group = '[D]ebug' },
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },

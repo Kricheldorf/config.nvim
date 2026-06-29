@@ -29,11 +29,10 @@
 |--------------|----------------------|
 | `<leader>f`  | find (snacks picker) |
 | `<leader>g`  | git                  |
-| `<leader>l`  | lsp                  |
 | `<leader>d`  | debug / dap          |
 | `<leader>t`  | test (neotest)       |
 | `<leader>x`  | problems (trouble)   |
-| `<leader>c`  | code (format)        |
+| `<leader>c`  | code (format, lsp)   |
 | `<leader>n`  | notes (obsidian)     |
 | `<leader>o`  | oil                  |
 | `<leader>s`  | search/replace       |

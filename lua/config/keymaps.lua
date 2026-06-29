@@ -63,6 +63,8 @@ vim.keymap.set('v', '>', '>gv', { desc = 'Indent and keep selection' })
 
 vim.keymap.set('x', 'p', [["_dP]], { desc = 'Paste over selection without losing yanked text' })
 
+vim.keymap.set('n', '<leader>cr', '<cmd>LspRestart<cr>', { desc = '[C]ode: LSP [R]estart (clear stale diagnostics)' })
+
 vim.keymap.set('n', '<leader>yr', function()
   local abs = vim.fn.expand '%:p'
   local root = vim.fn.systemlist({ 'git', '-C', vim.fn.expand '%:p:h', 'rev-parse', '--show-toplevel' })[1]

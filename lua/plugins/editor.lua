@@ -34,6 +34,12 @@ return {
           ['<C-k>'] = false,
           ['<C-j>'] = false,
           ['<M-h>'] = 'actions.select_split',
+          ['<C-t>'] = {
+            callback = function()
+              Snacks.terminal(nil, { cwd = oil.get_current_dir() })
+            end,
+            desc = 'oil: open terminal in dir',
+          },
           gs = {
             callback = function()
               -- get the current directory

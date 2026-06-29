@@ -136,3 +136,13 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
   command = 'checktime',
 })
+
+-- Restart LSP clients to clear stale diagnostics (e.g. after switching git branches).
+-- nvim-lspconfig dropped the legacy :LspRestart; native vim.lsp.enable ships none.
+-- Stopping clients then re-editing refires FileType, which reattaches them fresh.
+vim.api.nvim_create_user_command('LspRestart', function()
+  for _, client in ipairs(vim.lsp.get_clients()) do
+    client:stop()
+  end
+  vim.defer_fn(vim.cmd.edit, 200)
+end, { desc = 'Restart LSP clients on current buffer' })

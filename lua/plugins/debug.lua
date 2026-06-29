@@ -133,8 +133,9 @@ return {
           -- "Attach to Node process (pick PID)" and pick the next-server PID instead.
           type = 'pwa-node',
           request = 'attach',
-          name = 'Next server (shipix-app, port 9229)',
-          port = 9229,
+          name = 'Next server (shipix-app, prompt port)',
+          -- dap evaluates function config values, so prompt for the inspector port at launch
+          port = function() return tonumber(vim.fn.input 'Inspector port: ', '9229') end,
           cwd = '${workspaceFolder}/apps/shipix-app',
           sourceMaps = true,
           restart = true,
